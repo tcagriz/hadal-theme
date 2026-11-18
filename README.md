@@ -4,12 +4,14 @@ A unified **Hadal** color theme (based on the VS Code Abyss theme) for terminal 
 development tools, so your editor, shell, multiplexer and file tools all look the same.
 
 - [Supported tools](#supported-tools)
+- [Platform support](#platform-support)
 - [Palette](#palette)
 - [Quick start](#quick-start)
 - [Setup per tool](#setup-per-tool)
 - [Uninstall](#uninstall)
 - [Development](#development)
 - [Status](#status)
+- [TODO](#todo)
 
 ## Supported tools
 
@@ -30,6 +32,24 @@ development tools, so your editor, shell, multiplexer and file tools all look th
 | lazygit | `lazygit/config.yml` | symlink or `LG_CONFIG_FILE` |
 | starship | `starship/hadal.toml` | **copy the palette table** (no include support) |
 | Herdr TUI | `herdr-tui/theme.toml` | **copy the theme table** (no include support) |
+
+## Platform support
+
+Only macOS has been tested so far. Linux and Windows status is based on reading the code.
+
+| Part | macOS | Linux | Windows |
+| --- | --- | --- | --- |
+| Theme files (JSON, Lua, TOML, CSS) | ✅ | ✅ | ✅ |
+| VS Code, Zed and Inkdrop packages | ✅ | ✅ | ✅ |
+| `hadal.nvim` (lazy.nvim) | ✅ | ✅ | ✅ |
+| `install.sh` | ✅ tested | ⚠️ expected to work, untested | ❌ needs bash (WSL or Git Bash) and different paths |
+| `build.py` and `sync.sh` | ✅ | ⚠️ untested | ⚠️ untested (line endings, bash) |
+
+- `install.sh` uses `$XDG_CONFIG_HOME` or `~/.config` and plain bash.
+- lazygit uses `~/Library/Application Support/lazygit/` on macOS and `~/.config/lazygit/` on Linux.
+- Platform support of the apps themselves depends on each app: cmux is macOS only,
+  Ghostty runs on macOS and Linux, and WezTerm, Zed, VS Code, Neovim, tmux, starship
+  and lsd run on all three.
 
 ## Palette
 
@@ -353,6 +373,22 @@ Early work in progress. Verified: the generated files match the original hand-ma
 `install.sh` was tested against a temporary config directory, and Neovim, tmux, zsh,
 lsd and WezTerm load the theme without errors. Not yet verified visually or end to end:
 lazygit, Zed, Ghostty, cmux, Herdr TUI, starship and Inkdrop on a clean machine.
+
+## TODO
+
+Cross-platform work, in rough priority order:
+
+- [ ] Run `install.sh` on Linux (container or VM) and fix any path or tool differences.
+- [ ] Run `build.py --check` and `sync.sh` on Linux and Windows (WSL).
+- [ ] Add a GitHub Actions matrix (ubuntu, macos, windows) for `build.py --check` and the JSON checks.
+- [ ] Make `build.py` write files with `\n` line endings on Windows, so `--check` is stable with CRLF checkouts.
+- [ ] Add `.gitattributes` to force LF for generated files.
+- [ ] Make `install.sh` detect lazygit's config directory per OS instead of documenting it.
+- [ ] Write a Windows installer (`install.ps1`) with the right config paths (`%APPDATA%`, `%LOCALAPPDATA%`) and a copy fallback when symlinks are not allowed.
+- [ ] Document per-tool config locations on Linux and Windows (Zed, Ghostty, WezTerm, Neovim, lsd, starship, tmux).
+- [ ] Verify Inkdrop, VS Code, Zed and Neovim themes on Linux and Windows.
+- [ ] Mark cmux (macOS only) and Ghostty (no Windows build) clearly in the tool table.
+- [ ] Update the Status section once each platform has been verified.
 
 ## License
 
