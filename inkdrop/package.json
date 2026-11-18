@@ -1,0 +1,39 @@
+{
+  "name": "hadal",
+  "version": "0.1.0",
+  "description": "Hadal dark theme for Inkdrop, based on the VS Code Abyss color theme",
+  "keywords": [
+    "dark",
+    "inkdrop",
+    "hadal",
+    "markdown",
+    "theme"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tcagriz/hadal-inkdrop.git"
+  },
+  "homepage": "https://github.com/tcagriz/hadal-inkdrop",
+  "bugs": {
+    "url": "https://github.com/tcagriz/hadal-inkdrop/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "prepublishOnly": "generate-palette"
+  },
+  "devDependencies": {
+    "@inkdropapp/theme-dev-helpers": "^0.7.1"
+  },
+  "engines": {
+    "inkdrop": "^6.0.0"
+  },
+  "styleSheets": [
+    "palette.css",
+    "ui.css",
+    "syntax.css",
+    "preview.css"
+  ],
+  "theme": true,
+  "themeAppearance": "dark"
+}

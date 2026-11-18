@@ -1,0 +1,34 @@
+{
+  "app": {
+    "accentColor": "#2277ff"
+  },
+  "paneBorderColor": "#2b2b4a",
+  "activePaneBorderColor": "#596f99",
+  "notifications": {
+    "paneFlashColor": "#ddbb88"
+  },
+  "sidebar": {
+    "selectionColor": "#08286b",
+    "notificationBadgeColor": "#ddbb88"
+  },
+  "workspaceColors": {
+    "colors": {
+      "Red": "#dc322f",
+      "Crimson": "#a22d44",
+      "Orange": "#cb4b16",
+      "Amber": "#ddbb88",
+      "Olive": "#ffddaa",
+      "Green": "#22aa44",
+      "Teal": "#219186",
+      "Aqua": "#406385",
+      "Blue": "#2277ff",
+      "Navy": "#08286b",
+      "Indigo": "#384887",
+      "Purple": "#9966b8",
+      "Magenta": "#f280d0",
+      "Rose": "#225588",
+      "Brown": "#2b3c5d",
+      "Charcoal": "#2b2b4a"
+    }
+  }
+}

@@ -1,0 +1,64 @@
+@layer theme.preview {
+  :root {
+    --mde-preview-link-color: var(--hadal-ui-accent);
+    --mde-preview-heading-color: var(--hadal-syn-func);
+    --mde-preview-strong-color: var(--hadal-syn-fg-bright);
+    --mde-preview-em-color: var(--hadal-syn-rosewater);
+
+    --mde-preview-list-marker-color: var(--hadal-syn-string);
+    --mde-preview-list-marker-2-color: var(--hadal-syn-func);
+    --mde-preview-list-marker-3-color: var(--hadal-syn-builtin);
+
+    --mde-preview-codeblock-background-color: var(--hadal-ui-line);
+    --mde-preview-codeblock-meta-background-color: var(--hadal-ui-raised);
+    --mde-preview-inline-code-text-color: var(--hadal-syn-string);
+    --mde-preview-inline-code-border-width: 1px;
+    --mde-preview-inline-code-border-color: var(--hadal-ui-border);
+    --mde-preview-inline-code-background-color: var(--hadal-ui-line);
+
+    --mde-preview-blockquote-text-color: var(--hadal-ui-dim);
+    --mde-preview-blockquote-border-color: var(--hadal-ui-solid);
+
+    --mde-preview-table-head-text-color: var(--hadal-syn-func);
+    --mde-preview-table-head-background-color: var(--hadal-ui-raised);
+    --mde-preview-table-row-background-color: var(--hadal-bg);
+    --mde-preview-table-row-stripe-background-color: var(--hadal-ui-line);
+    --mde-preview-image-background-color: var(--hadal-ui-line);
+
+    --mde-preview-inline-mark-text-color: var(--hadal-syn-rosewater);
+    --mde-preview-inline-mark-background-color: var(--hadal-tint-error-bg);
+    --mde-preview-inline-mark-underline-color: var(--hadal-syn-error);
+
+    --mermaid-text-color: var(--hadal-fg);
+    --mermaid-line-color: var(--hadal-ui-focus);
+    --mermaid-node-text-color: var(--hadal-syn-fg-bright);
+    --mermaid-node-background-color: var(--hadal-ui-raised);
+    --mermaid-node-border-color: var(--hadal-ui-accent);
+    --mermaid-cluster-background-color: var(--hadal-ui-line);
+    --mermaid-cluster-border-color: var(--hadal-ui-border);
+    --mermaid-edge-label-background-color: var(--hadal-bg);
+    --mermaid-note-background-color: var(--hadal-tint-warn-bg);
+    --mermaid-note-border-color: var(--hadal-syn-func);
+    --mermaid-note-text-color: var(--hadal-syn-rosewater);
+    --mermaid-label-box-background-color: var(--hadal-ui-raised);
+    --mermaid-label-box-border-color: var(--hadal-ui-focus);
+    --mermaid-label-text-color: var(--hadal-syn-fg-bright);
+    --mermaid-section-background-color: var(--hadal-ui-line);
+    --mermaid-alt-section-background-color: var(--hadal-ui-raised);
+    --mermaid-task-background-color: var(--hadal-ui-active);
+    --mermaid-task-border-color: var(--hadal-ui-accent);
+    --mermaid-active-task-background-color: var(--hadal-tint-hint-bg);
+    --mermaid-active-task-border-color: var(--hadal-syn-string);
+    --mermaid-done-task-background-color: var(--hadal-ui-raised);
+    --mermaid-done-task-border-color: var(--hadal-ui-dim);
+    --mermaid-crit-task-background-color: var(--hadal-tint-diff-delete);
+    --mermaid-crit-task-border-color: var(--hadal-syn-error);
+    --mermaid-grid-color: var(--hadal-ui-border);
+    --mermaid-today-line-color: var(--hadal-syn-orange);
+    --mermaid-primary-color: var(--hadal-ui-active);
+    --mermaid-secondary-color: var(--hadal-syn-builtin);
+    --mermaid-tertiary-color: var(--hadal-syn-add);
+    --mermaid-error-background-color: var(--hadal-tint-error-bg);
+    --mermaid-error-text-color: var(--hadal-syn-error);
+  }
+}

@@ -1,0 +1,128 @@
+@layer theme.syntax {
+  /* Hadal editor + syntax. Mirrors the Neovim colorscheme mapping. */
+  :root {
+    --editor-foreground-color: var(--hadal-fg);
+    --editor-background-color: var(--hadal-bg);
+    --editor-caret-color: var(--hadal-cursor);
+    --editor-selection-background: var(--hadal-selection);
+    --editor-focused-selection-background: var(--hadal-selection);
+    --editor-active-line-background-color: var(--hadal-ui-line);
+    --editor-special-char-color: var(--hadal-ui-comment);
+    --editor-spelling-error-color: var(--hadal-syn-error);
+    --editor-gutter-border-right: none;
+    --editor-gutter-color: var(--hadal-ui-comment);
+    --editor-gutter-background-color: transparent;
+    --editor-gutter-background-solid-color: var(--hadal-bg);
+    --editor-active-line-gutter-background-color: var(--hadal-ui-line);
+    --editor-panel-background-color: var(--hadal-ui-popover);
+    --editor-panel-color: var(--hadal-fg);
+    --editor-panel-border-color: var(--hadal-ui-border);
+    --editor-tooltip-border-style: solid;
+    --editor-tooltip-border-width: 1px;
+    --editor-tooltip-border-color: var(--hadal-ui-border);
+    --editor-tooltip-background-color: var(--hadal-ui-popover);
+    --editor-tooltip-autocomplete-item-selected-background-color: var(--hadal-ui-active);
+    --editor-tooltip-autocomplete-item-selected-color: var(--hadal-syn-fg-bright);
+    --editor-inline-tooltip-color: var(--hadal-fg);
+    --editor-inline-tooltip-background-color: var(--hadal-ui-popover);
+    --editor-inline-tooltip-outline: 1px solid var(--hadal-ui-border);
+    --editor-completion-label: var(--hadal-fg);
+    --editor-completion-matched-text-color: var(--hadal-syn-func);
+    --editor-completion-detail-color: var(--hadal-ui-dim);
+    --editor-matching-bracket-outline: 1px solid var(--hadal-ui-focus);
+    --editor-matching-bracket-background-color: var(--hadal-ui-active);
+    --editor-nonmatching-bracket-outline: 1px solid var(--hadal-syn-error);
+    --editor-selection-match-background-color: var(--hadal-ui-hover);
+    --editor-search-match-background-color: var(--hadal-tint-diff-text);
+    --editor-search-match-selected-background-color: var(--hadal-ui-active);
+    --editor-search-match-selected-outline: 1px solid var(--hadal-syn-func);
+    --editor-placeholder-color: var(--hadal-ui-comment);
+    --editor-nes-ghost-color: var(--hadal-ui-comment);
+    --editor-highlight-space-color: var(--hadal-ui-solid);
+    --editor-trailing-space-background-color: var(--hadal-tint-diff-delete);
+    --editor-fold-placeholder-color: var(--hadal-ui-dim);
+    --editor-fold-placeholder-border: 1px solid var(--hadal-ui-border);
+    --editor-fold-placeholder-background-color: var(--hadal-ui-raised);
+    --editor-image-widget-backdrop-background-color: var(--hadal-ui-line);
+    --editor-image-widget-backdrop-border: 1px solid var(--hadal-ui-border);
+
+    --md-inline-code-border-color: var(--hadal-ui-border);
+    --md-inline-code-background-color: var(--hadal-ui-line);
+    --md-codeblock-color: var(--hadal-fg);
+    --md-codeblock-border-color: var(--hadal-ui-border);
+    --md-codeblock-background-color: var(--hadal-ui-line);
+    --md-inline-mark-text-color: var(--hadal-syn-rosewater);
+    --md-inline-mark-background-color: var(--hadal-tint-error-bg);
+    --md-inline-mark-underline-color: var(--hadal-syn-error);
+    --md-table-border-color: var(--hadal-ui-border);
+    --md-table-background-color: var(--hadal-ui-line);
+    --md-blockquote-border-color: var(--hadal-ui-solid);
+    --md-list-mark-color: var(--hadal-syn-string);
+    --md-list-mark-2-color: var(--hadal-syn-func);
+    --md-list-mark-3-color: var(--hadal-syn-builtin);
+
+    --syntax-comment-color: var(--hadal-ui-comment);
+    --syntax-comment-font-style: italic;
+
+    --syntax-name-color: var(--hadal-fg);
+    --syntax-name-constant-color: var(--hadal-syn-number);
+    --syntax-name-definition-color: var(--hadal-syn-func);
+    --syntax-name-function-color: var(--hadal-syn-func);
+    --syntax-name-special-color: var(--hadal-syn-builtin);
+    --syntax-variable-name-color: var(--hadal-fg);
+    --syntax-variable-name-function-color: var(--hadal-syn-func);
+    --syntax-variable-name-special-color: var(--hadal-syn-builtin);
+    --syntax-property-name-color: var(--hadal-syn-fg-bright);
+    --syntax-tag-name-color: var(--hadal-syn-keyword);
+    --syntax-attribute-name-color: var(--hadal-syn-func);
+    --syntax-class-name-color: var(--hadal-syn-type);
+    --syntax-label-name-color: var(--hadal-syn-orange);
+    --syntax-namespace-color: var(--hadal-syn-type);
+    --syntax-macro-name-color: var(--hadal-syn-builtin);
+
+    --syntax-string-color: var(--hadal-syn-string);
+    --syntax-string-special-color: var(--hadal-syn-orange);
+    --syntax-character-color: var(--hadal-syn-string);
+    --syntax-regexp-color: var(--hadal-syn-orange);
+    --syntax-url-color: var(--hadal-ui-accent);
+    --syntax-number-color: var(--hadal-syn-number);
+    --syntax-bool-color: var(--hadal-syn-number);
+    --syntax-atom-color: var(--hadal-syn-number);
+    --syntax-null-color: var(--hadal-syn-number);
+    --syntax-self-color: var(--hadal-syn-builtin);
+    --syntax-color-color: var(--hadal-syn-number);
+    --syntax-attribute-value-color: var(--hadal-syn-string);
+
+    --syntax-keyword-color: var(--hadal-syn-keyword);
+    --syntax-modifier-color: var(--hadal-syn-keyword);
+    --syntax-operator-color: var(--hadal-syn-fg-bright);
+    --syntax-separator-color: var(--hadal-ui-dim);
+    --syntax-punctuation-color: var(--hadal-ui-dim);
+    --syntax-bracket-color: var(--hadal-ui-dim);
+
+    --syntax-heading-color: var(--hadal-syn-func);
+    --syntax-heading-font-weight: bold;
+    --syntax-content-separator-color: var(--hadal-ui-comment);
+    --syntax-list-color: var(--hadal-fg);
+    --syntax-quote-color: var(--hadal-ui-dim);
+    --syntax-quote-font-style: italic;
+    --syntax-emphasis-color: var(--hadal-syn-rosewater);
+    --syntax-emphasis-font-style: italic;
+    --syntax-strong-color: var(--hadal-syn-fg-bright);
+    --syntax-strong-font-weight: bold;
+    --syntax-link-color: var(--hadal-ui-accent);
+    --syntax-link-text-decoration: underline;
+    --syntax-strikethrough-text-decoration: line-through;
+    --syntax-monospace-color: var(--hadal-syn-string);
+    --syntax-content-color: var(--hadal-fg);
+
+    --syntax-inserted-color: var(--hadal-syn-string);
+    --syntax-deleted-color: var(--hadal-syn-error);
+    --syntax-changed-color: var(--hadal-syn-func);
+    --syntax-annotation-color: var(--hadal-syn-orange);
+    --syntax-processing-instruction-color: var(--hadal-syn-builtin);
+    --syntax-meta-color: var(--hadal-ui-dim);
+    --syntax-invalid-color: var(--hadal-syn-invalid);
+    --syntax-invalid-border-bottom: 1px dotted var(--hadal-syn-error);
+  }
+}

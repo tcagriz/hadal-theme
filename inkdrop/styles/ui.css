@@ -1,0 +1,125 @@
+@layer theme.ui {
+  /* Hadal UI overrides. Colors come only from palette.css (--hadal-*). */
+  :root {
+    --primary-color: var(--hadal-ui-accent);
+    --secondary-color: var(--hadal-fg);
+    --light-primary-color: var(--hadal-syn-fg-bright);
+    --light-secondary-color: var(--hadal-ui-dim);
+
+    --input-background: var(--hadal-ui-input);
+    --input-color: var(--hadal-fg);
+    --input-placeholder-color: var(--hadal-ui-comment);
+    --input-placeholder-focus-color: var(--hadal-ui-dim);
+
+    --focused-form-border-color: var(--hadal-ui-accent);
+    --focused-form-muted-border-color: var(--hadal-ui-focus);
+    --focused-outline-color: color-mix(in srgb, var(--hadal-ui-accent) 30%, transparent);
+    --input-focus-border-color: var(--hadal-ui-accent);
+
+    --page-background: var(--hadal-bg);
+    --text-color: var(--hadal-fg);
+    --link-color: var(--hadal-ui-accent);
+    --link-hover-color: var(--hadal-syn-fg-bright);
+
+    --highlight-background: var(--hadal-ui-active);
+    --highlight-color: var(--hadal-syn-fg-bright);
+    --input-highlight-background: var(--hadal-ui-active);
+    --input-highlight-color: var(--hadal-syn-fg-bright);
+    --loader-line-color: var(--hadal-ui-dim);
+
+    --red: var(--hadal-syn-error);
+    --orange: var(--hadal-syn-orange);
+    --yellow: var(--hadal-syn-func);
+    --olive: var(--hadal-syn-string);
+    --green: var(--hadal-syn-string);
+    --teal: var(--hadal-syn-add);
+    --blue: var(--hadal-ui-accent);
+    --violet: var(--hadal-syn-builtin);
+    --purple: var(--hadal-syn-builtin);
+    --pink: var(--hadal-syn-number);
+    --brown: var(--hadal-syn-rosewater);
+    --grey: var(--hadal-ui-dim);
+
+    --positive-color: var(--hadal-syn-string);
+    --negative-color: var(--hadal-syn-error);
+    --info-color: var(--hadal-ui-accent);
+    --warning-color: var(--hadal-syn-func);
+
+    --dark-text-color: var(--hadal-fg);
+    --muted-text-color: var(--hadal-ui-dim);
+    --light-text-color: var(--hadal-ui-dim);
+    --unselected-text-color: var(--hadal-ui-dim);
+    --hovered-text-color: var(--hadal-syn-fg-bright);
+    --selected-text-color: var(--hadal-syn-fg-bright);
+
+    --border-color: var(--hadal-ui-border);
+    --strong-border-color: var(--hadal-ui-solid);
+    --internal-border-color: var(--hadal-ui-line);
+    --selected-border-color: var(--hadal-ui-focus);
+    --solid-border-color: var(--hadal-ui-border);
+    --solid-internal-border-color: var(--hadal-ui-line);
+    --solid-selected-border-color: var(--hadal-ui-focus);
+
+    --button-background: var(--hadal-ui-raised) none;
+    --button-text-color: var(--hadal-fg);
+    --button-hover-background-color: var(--hadal-ui-hover);
+    --button-down-background-color: var(--hadal-ui-active);
+    --button-active-background-color: var(--hadal-ui-active);
+    --basic-button-hover-background: var(--hadal-ui-hover);
+
+    --kbd-background: var(--hadal-ui-raised);
+    --mark-background-color: color-mix(in srgb, var(--hadal-syn-func) 22%, transparent);
+    --mark-border-color: color-mix(in srgb, var(--hadal-syn-func) 40%, transparent);
+    --mark-color: var(--hadal-syn-fg-bright);
+    --header-text-color: var(--hadal-syn-func);
+
+    --segment-background: var(--hadal-ui-raised);
+    --secondary-segment-background: var(--hadal-ui-line);
+    --grouped-segment-hover-background: var(--hadal-ui-hover);
+    --piled-segments-background: var(--hadal-ui-raised);
+
+    --form-select-background: var(--hadal-ui-input);
+    --form-prompt-background: var(--hadal-ui-raised);
+
+    --menu-background: var(--hadal-ui-popover);
+    --vertical-menu-background: var(--hadal-ui-side);
+    --tabular-menu-active-background: none var(--hadal-ui-line);
+    --popup-background: var(--hadal-ui-popover);
+    --table-header-background: var(--hadal-ui-raised);
+    --dropdown-menu-background: var(--hadal-ui-popover);
+    --inline-dropdown-menu-background: var(--hadal-ui-popover);
+
+    --modal-box-header-background: var(--hadal-ui-popover);
+    --modal-box-content-background: var(--hadal-ui-canvas);
+    --modal-box-actions-background: var(--hadal-ui-canvas);
+
+    --sidebar-background: var(--hadal-ui-side);
+    --sidebar-border-right: 1px solid var(--hadal-ui-border);
+    --sidebar-menu-item-color: var(--hadal-fg);
+    --sidebar-sync-status-view-background: var(--hadal-ui-line);
+    --sidebar-sync-status-view-border-top: 1px solid var(--hadal-ui-border);
+
+    --note-list-bar-background: var(--hadal-ui-canvas);
+    --note-list-bar-border-right: 1px solid var(--hadal-ui-border);
+    --note-list-bar-section-header-background: var(--hadal-ui-popover);
+    --note-list-view-item-header-color: var(--hadal-syn-fg-bright);
+    --note-list-view-item-separator-border: 1px solid var(--hadal-ui-border);
+    --note-list-view-item-date-color: var(--hadal-ui-dim);
+    --note-list-view-item-selected-background: var(--hadal-ui-hover);
+    --note-list-view-item-active-background: var(--hadal-ui-active);
+    --note-search-bar-input-background: var(--hadal-ui-input);
+
+    --editor-background: var(--hadal-bg);
+    --editor-floating-actions-background: color-mix(in srgb, var(--hadal-ui-popover) 85%, transparent);
+    --editor-drawer-background: color-mix(in srgb, var(--hadal-ui-popover) 85%, transparent);
+
+    --notification-item-background: var(--hadal-ui-popover);
+    --preferences-sidebar-background: var(--hadal-ui-side);
+    --preferences-view-background: var(--hadal-bg);
+
+    --note-status-active: var(--hadal-status-working);
+    --note-status-onhold: var(--hadal-status-idle);
+    --note-status-completed: var(--hadal-status-done);
+    --note-status-dropped: var(--hadal-status-blocked);
+  }
+}
