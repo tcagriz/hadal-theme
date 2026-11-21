@@ -18,6 +18,20 @@ The `main` branch is protected in all five repositories.
 - The Marketplace and Inkdrop publish jobs target the protected `production`
   environment. They cannot publish until `@tcagriz` approves the deployment.
 
+## Roadmap
+
+Track planned work in the public
+[Hadal Roadmap](https://github.com/users/tcagriz/projects/3). Issues remain the
+source of truth and should live in this monorepo even when the work later changes a
+standalone package mirror.
+
+- Use the **Roadmap task** issue form for proposed work.
+- Add priority, area, package and release-impact metadata before work starts.
+- Link pull requests with `Closes #<issue-number>`.
+- Move mirror-specific bug reports into the monorepo and link the original report.
+- Keep implementation checklists on the linked issue instead of duplicating them
+  in multiple README or project files.
+
 ## Development
 
 `palette/palette.json` is the single source of truth for colors. These files are
@@ -103,13 +117,7 @@ Do not commit access tokens or other credentials.
 - **Zed:** not published yet. The extension ID and registry name must be resolved
   before submitting to the Zed registry.
 
-## Cross-platform work
+## Roadmap source of truth
 
-- [ ] Run `install.sh` on Linux (container or VM) and fix any path or tool differences.
-- [ ] Run `build.py --check` and `sync.sh` on Linux and Windows (WSL).
-- [ ] Add a GitHub Actions matrix for Linux, macOS and Windows.
-- [ ] Make generated-file line endings stable with Windows CRLF checkouts.
-- [ ] Add `.gitattributes` for generated files.
-- [ ] Detect lazygit's config directory per operating system.
-- [ ] Add a native Windows installer with `%APPDATA%` and `%LOCALAPPDATA%` paths.
-- [ ] Verify the ports on Linux and Windows.
+Do not add a second long-lived TODO list here. The roadmap project and its linked
+issues contain the current priorities, milestones, acceptance criteria and status.
