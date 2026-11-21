@@ -1,0 +1,89 @@
+name: Roadmap task
+description: Propose a development task for the Hadal roadmap
+title: "[Roadmap] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Source changes belong in this monorepo. Standalone package repositories are
+        synchronized mirrors.
+
+        Start by checking the existing
+        [Hadal Roadmap](https://github.com/users/tcagriz/projects/3).
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What outcome should this task deliver?
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: List the expected implementation boundaries and important exclusions.
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Add concrete, checkable outcomes.
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: packages
+    attributes:
+      label: Affected packages
+      multiple: true
+      options:
+        - Monorepo
+        - VS Code
+        - Inkdrop
+        - Neovim
+        - Zed
+        - All packages
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Suggested priority
+      options:
+        - P0 - blocker or release safety
+        - P1 - quality, CI, testing, or platform
+        - P2 - discovery, distribution, or metadata
+        - P3 - optional port or integration
+    validations:
+      required: true
+
+  - type: dropdown
+    id: release-impact
+    attributes:
+      label: Release impact
+      options:
+        - None
+        - Patch
+        - Minor
+        - Major
+    validations:
+      required: true
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related work
+      description: Link related issues, pull requests, mirror reports, or external requirements.
+    validations:
+      required: false
