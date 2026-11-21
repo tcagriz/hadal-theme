@@ -9,43 +9,47 @@ development tools, so your editor, shell, multiplexer and file tools all look th
 - [Quick start](#quick-start)
 - [Setup per tool](#setup-per-tool)
 - [Uninstall](#uninstall)
-- [Development](#development)
-- [Status](#status)
-- [TODO](#todo)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Supported tools
 
-| Tool | Files | How it is applied |
-| --- | --- | --- |
-| herdr-app | `herdr-app/hadal.json` | installed, select the theme in settings |
-| Zed | `zed/themes/hadal.json` | installed, select the theme in settings |
-| Ghostty | `ghostty/hadal` | installed, set `theme = hadal` |
-| cmux | `ghostty/hadal`, `cmux/hadal.json` | Ghostty theme plus a settings snippet to merge |
-| opencode | `opencode/hadal.json` | installed, set the theme in `cli.json` |
-| Neovim (Treesitter, LSP, plugins) | `neovim/` | installed, activate with `:colorscheme hadal` |
-| Inkdrop 6 | `inkdrop/` | link into the packages folder, select the theme in Preferences |
-| VS Code | `vscode/` | install the extension, select the theme |
-| lsd | `lsd/` | installed, needs `color.theme: custom` |
-| zsh (syntax highlighting, autosuggestions, fzf) | `zsh/hadal.zsh` | one `source` line |
-| tmux (catppuccin/tmux) | `tmux/hadal.conf` | one `source-file` line |
-| WezTerm | `wezterm/hadal.lua` | one `dofile` line |
-| lazygit | `lazygit/config.yml` | symlink or `LG_CONFIG_FILE` |
-| starship | `starship/hadal.toml` | **copy the palette table** (no include support) |
-| Herdr TUI | `herdr-tui/theme.toml` | **copy the theme table** (no include support) |
+Published packages:
+
+| Tool | Install |
+| --- | --- |
+| [VS Code](https://marketplace.visualstudio.com/items?itemName=tcagriz.hadal-theme) | `code --install-extension tcagriz.hadal-theme` |
+| [Inkdrop 6](https://github.com/tcagriz/hadal-inkdrop) | `ipm install hadal` |
+| [Neovim](https://github.com/tcagriz/hadal.nvim) | lazy.nvim: `"tcagriz/hadal.nvim"` |
+
+Other ports are installed from this monorepo:
+
+| Tool | Install |
+| --- | --- |
+| [Zed](https://github.com/tcagriz/hadal-zed) | manual theme file; not yet in the Zed extension catalog |
+| herdr-app | `./install.sh herdr-app` |
+| Ghostty | `./install.sh ghostty` |
+| cmux | `./install.sh ghostty snippets` |
+| opencode | `./install.sh opencode` |
+| lsd | `./install.sh lsd` |
+| zsh, tmux, WezTerm, lazygit, starship, Herdr TUI | `./install.sh snippets` and the setup step below |
 
 ## Platform support
 
-Only macOS has been tested so far. Linux and Windows status is based on reading the code.
+The theme definitions contain no platform-specific binaries. The project has been
+tested on macOS; Linux and Windows compatibility below is not a visual or end-to-end
+verification.
 
-| Part | macOS | Linux | Windows |
+| Component | macOS | Linux | Windows |
 | --- | --- | --- | --- |
-| Theme files (JSON, Lua, TOML, CSS) | ✅ | ✅ | ✅ |
-| VS Code, Zed and Inkdrop packages | ✅ | ✅ | ✅ |
-| `hadal.nvim` (lazy.nvim) | ✅ | ✅ | ✅ |
-| `install.sh` | ✅ tested | ⚠️ expected to work, untested | ❌ needs bash (WSL or Git Bash) and different paths |
-| `build.py` and `sync.sh` | ✅ | ⚠️ untested | ⚠️ untested (line endings, bash) |
+| VS Code extension | available | available | available |
+| Inkdrop theme | tested | Inkdrop 6 supports it; untested | Inkdrop 6 supports it; untested |
+| `hadal.nvim` | tested | expected; untested | expected; untested |
+| Standalone theme files | available | expected; untested | expected; untested |
+| `install.sh` | tested | expected; untested | not native; requires bash and Windows-specific config paths |
 
-- `install.sh` uses `$XDG_CONFIG_HOME` or `~/.config` and plain bash.
+- `install.sh` uses `$XDG_CONFIG_HOME` or `~/.config` and plain bash. The documented
+  shell commands below target macOS and Linux.
 - lazygit uses `~/Library/Application Support/lazygit/` on macOS and `~/.config/lazygit/` on Linux.
 - Platform support of the apps themselves depends on each app: cmux is macOS only,
   Ghostty runs on macOS and Linux, and WezTerm, Zed, VS Code, Neovim, tmux, starship
@@ -73,7 +77,7 @@ The full list is in [`palette/palette.json`](palette/palette.json).
 ## Quick start
 
 ```sh
-git clone <repo-url> hadal-theme
+git clone https://github.com/tcagriz/hadal-theme.git
 cd hadal-theme
 ./install.sh --dry-run        # preview, changes nothing
 ./install.sh                  # symlink everything (add --copy to copy instead)
@@ -105,8 +109,14 @@ Open the herdr-app settings and select the theme named **hadal**.
 
 ### Zed
 
-`zed/` is also a ready-to-publish Zed extension (`extension.toml` + `themes/`).
-`./install.sh zed` installs `~/.config/zed/themes/hadal.json`. In Zed's `settings.json`:
+Hadal is not currently published in the Zed extension catalog. The catalog already
+contains a different extension named Hadal, so do not install a theme by search alone.
+
+On macOS or Linux, `./install.sh zed` installs
+`~/.config/zed/themes/hadal.json`. On Windows, copy `zed/themes/hadal.json` to
+`%USERPROFILE%\AppData\Roaming\Zed\themes\`.
+
+In Zed's `settings.json`:
 
 ```json
 "theme": {
@@ -163,24 +173,23 @@ and set `"theme": "hadal"` in `tui.json` (verified with 1.19.6).
 
 ### Neovim
 
-The same files are also published as the standalone plugin `hadal.nvim` (see
-`neovim/README.md` for lazy.nvim installation); `./install.sh neovim` is the
-alternative that links the files from this checkout.
-
-`./install.sh neovim` places these files in `~/.config/nvim/`:
-
-| File | Purpose |
-| --- | --- |
-| `colors/hadal.lua` | colorscheme: UI, Treesitter, LSP, diagnostics, diff, terminal colors, plugin groups |
-| `lua/hadal/palette.lua` | generated color table used by everything below |
-| `lua/hadal/bufferline.lua` | highlights for bufferline.nvim |
-| `lazy.lua` (installed as `lua/plugins/hadal-bufferline.lua`) | lazy.nvim spec that applies those highlights |
-
-Activate it in `init.lua`, **after** your plugins and any other colorscheme are loaded:
+The recommended installation is the standalone
+[hadal.nvim](https://github.com/tcagriz/hadal.nvim) plugin:
 
 ```lua
-vim.cmd.colorscheme("hadal")
+{
+  "tcagriz/hadal.nvim",
+  lazy = false,
+  priority = 1000,
+  config = function()
+    vim.cmd.colorscheme("hadal")
+  end,
+}
 ```
+
+Alternatively, `./install.sh neovim` links the same files into `~/.config/nvim/`.
+Activate it in `init.lua`, **after** your plugins and any other colorscheme:
+`vim.cmd.colorscheme("hadal")`.
 
 Plugin groups covered: rainbow-delimiters, indent-blankline, nvim-tree, telescope,
 render-markdown, todo-comments, snacks and bufferline.
@@ -196,30 +205,27 @@ require("bufferline").setup({ highlights = require("hadal.bufferline") })
 
 ### Inkdrop
 
-Inkdrop 6 theme package in `inkdrop/` (`palette.css` is generated; `ui.css`,
-`syntax.css`, `preview.css` map Inkdrop variables to `--hadal-*` colors).
+Install the published Inkdrop 6 theme:
 
 ```sh
-cd inkdrop && ipm link
+ipm install hadal
 ```
 
-Restart or reload Inkdrop, then pick **Hadal** in Preferences > Themes (UI, editor and
-preview). For live editing, use the dev-tools plugin's "Start hot reloading themes".
-Note: `inkdrop/package.json` runs Inkdrop's own `generate-palette` on publish; that
-output is unrelated to `palette/palette.json`.
+Then restart or reload Inkdrop and pick **Hadal** in **Preferences > Themes**. The
+package themes the UI, editor and Markdown preview together.
 
 ### VS Code
 
-Extension in `vscode/` (`themes/hadal-color-theme.json` is generated). Build and install it
-locally:
+Install the published extension from
+[Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=tcagriz.hadal-theme)
+or with:
 
 ```sh
-cd vscode && npx @vscode/vsce package --allow-missing-repository
-code --install-extension hadal-theme-0.1.0.vsix
+code --install-extension tcagriz.hadal-theme
 ```
 
-Then run **Preferences: Color Theme** and select **Hadal**. To try it without installing,
-open `vscode/` in VS Code and press `F5` (Extension Development Host).
+Then run **Preferences: Color Theme** and select **Hadal**. VSIX files are also
+available from [GitHub Releases](https://github.com/tcagriz/hadal-vscode/releases/latest).
 
 ### lsd
 
@@ -325,6 +331,9 @@ This is separate from **herdr-app** (the GUI), which uses `herdr-app/hadal.json`
 
 ## Uninstall
 
+- VS Code: `code --uninstall-extension tcagriz.hadal-theme`.
+- Inkdrop: `ipm uninstall hadal`.
+- Neovim: remove the `tcagriz/hadal.nvim` plugin declaration from lazy.nvim.
 - Delete `~/.config/ghostty/themes/hadal` (a copy) and the files the installer linked (`hadal.json`, `colors/hadal.lua`,
   `lua/hadal/`, `lua/plugins/hadal-bufferline.lua`, `lsd/colors.yaml`,
   `~/.config/hadal/`).
@@ -333,62 +342,11 @@ This is separate from **herdr-app** (the GUI), which uses `herdr-app/hadal.json`
 - Remove the one-line includes you added to `.zshrc`, `.tmux.conf`, `.wezterm.lua` and
   the tables you copied into `starship.toml` and the Herdr TUI config.
 
-## Development
+## Contributing
 
-`palette/palette.json` is the single source of truth for colors. These files are
-**generated** from it and must not be edited by hand:
-
-`herdr-app/hadal.json`, `herdr-tui/theme.toml`, `wezterm/hadal.lua`, `ghostty/hadal`, `cmux/hadal.json`, `opencode/hadal.json`, `opencode/v1/hadal.json`, `tmux/hadal.conf`,
-`starship/hadal.toml`, `zsh/hadal.zsh`, `lsd/colors.yaml`, `lazygit/config.yml`,
-`zed/themes/hadal.json`, `neovim/lua/hadal/palette.lua`, `inkdrop/styles/palette.css`, `vscode/themes/hadal-color-theme.json`
-```sh
-python3 scripts/build.py          # regenerate after editing the palette
-python3 scripts/build.py --check  # verify nothing is stale (also run in CI)
-```
-
-Workflow for changing a color: edit `palette/palette.json`, run `scripts/build.py`,
-commit both the palette and the regenerated files. Requires Python 3 only.
-
-These files are **hand-written** because they hold mapping logic or a static setting
-rather than color data:
-
-- `neovim/colors/hadal.lua`: maps highlight groups to palette roles. It contains no hex
-  values and reads every color from the generated `hadal/palette.lua`.
-- `neovim/lua/hadal/bufferline.lua`, `neovim/lazy.lua`, `neovim/README.md`
-- `inkdrop/package.json`, `inkdrop/styles/{ui,syntax,preview}.css` (no hex, only `var(--hadal-*)`)
-- `vscode/package.json`
-- `zed/extension.toml`, `zed/README.md`
-- `lsd/config.yaml`
-- `install.sh`, `scripts/build.py`
-
-Standalone repos: `inkdrop/`, `vscode/`, `zed/` and `neovim/` are mirrored into `../hadal-inkdrop`,
-`../hadal-vscode`, `../hadal-zed` and `../hadal.nvim` with `scripts/sync.sh <inkdrop|vscode|zed|nvim>`
-(`git subtree split`, never pushes). Commit your changes in the package folder first.
-
-CI (`.github/workflows/check.yml`) runs `scripts/build.py --check` and validates the JSON files.
-
-## Status
-
-Early work in progress. Verified: the generated files match the original hand-made ones,
-`install.sh` was tested against a temporary config directory, and Neovim, tmux, zsh,
-lsd and WezTerm load the theme without errors. Not yet verified visually or end to end:
-lazygit, Zed, Ghostty, cmux, Herdr TUI, starship and Inkdrop on a clean machine.
-
-## TODO
-
-Cross-platform work, in rough priority order:
-
-- [ ] Run `install.sh` on Linux (container or VM) and fix any path or tool differences.
-- [ ] Run `build.py --check` and `sync.sh` on Linux and Windows (WSL).
-- [ ] Add a GitHub Actions matrix (ubuntu, macos, windows) for `build.py --check` and the JSON checks.
-- [ ] Make `build.py` write files with `\n` line endings on Windows, so `--check` is stable with CRLF checkouts.
-- [ ] Add `.gitattributes` to force LF for generated files.
-- [ ] Make `install.sh` detect lazygit's config directory per OS instead of documenting it.
-- [ ] Write a Windows installer (`install.ps1`) with the right config paths (`%APPDATA%`, `%LOCALAPPDATA%`) and a copy fallback when symlinks are not allowed.
-- [ ] Document per-tool config locations on Linux and Windows (Zed, Ghostty, WezTerm, Neovim, lsd, starship, tmux).
-- [ ] Verify Inkdrop, VS Code, Zed and Neovim themes on Linux and Windows.
-- [ ] Mark cmux (macOS only) and Ghostty (no Windows build) clearly in the tool table.
-- [ ] Update the Status section once each platform has been verified.
+Development setup, generated-file rules, publishing workflows and the cross-platform
+roadmap are in [CONTRIBUTING.md](CONTRIBUTING.md). Please make source changes in this
+monorepo; the dedicated package repositories are synchronized mirrors.
 
 ## License
 
