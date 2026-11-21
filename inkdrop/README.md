@@ -24,13 +24,17 @@ this repository:
 
 ```sh
 npm ci
+npx generate-palette
 ipm publish
 ```
 
-The `publish.yml` workflow can publish unattended after adding
+The installed `ipm` CLI does not currently run the `prepublishOnly` script, so
+`npx generate-palette` must run explicitly before publishing.
+
+The `publish.yml` workflow generates `palette.json` automatically and can publish
+unattended after adding
 `INKDROP_ACCESS_KEY_ID` and `INKDROP_SECRET_ACCESS_KEY` as repository Actions
-secrets. Keep the first local release manual until the credentials and registry
-name are confirmed.
+secrets. The registry package name `hadal` is confirmed and available.
 
 ## License
 

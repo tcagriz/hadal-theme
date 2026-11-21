@@ -1,6 +1,6 @@
 {
   "name": "hadal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "tcagriz",
   "description": "Hadal dark theme for Inkdrop, based on the VS Code Abyss color theme",
   "keywords": [
@@ -38,6 +38,7 @@
   "theme": true,
   "themeAppearance": "dark",
   "files": [
+    "CHANGELOG.md",
     "styles",
     "palette.json"
   ]
