@@ -17,6 +17,15 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Verify credentials
+        env:
+          INKDROP_ACCESS_KEY_ID: ${{ secrets.INKDROP_ACCESS_KEY_ID }}
+          INKDROP_SECRET_ACCESS_KEY: ${{ secrets.INKDROP_SECRET_ACCESS_KEY }}
+        run: |
+          if [ -z "$INKDROP_ACCESS_KEY_ID" ] || [ -z "$INKDROP_SECRET_ACCESS_KEY" ]; then
+            echo "::error::Set INKDROP_ACCESS_KEY_ID and INKDROP_SECRET_ACCESS_KEY repository secrets before publishing."
+            exit 1
+          fi
       - name: Publish package
         env:
           INKDROP_ACCESS_KEY_ID: ${{ secrets.INKDROP_ACCESS_KEY_ID }}
