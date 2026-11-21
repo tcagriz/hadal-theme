@@ -1,0 +1,24 @@
+name: Publish to Inkdrop registry
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Publish package
+        env:
+          INKDROP_ACCESS_KEY_ID: ${{ secrets.INKDROP_ACCESS_KEY_ID }}
+          INKDROP_SECRET_ACCESS_KEY: ${{ secrets.INKDROP_SECRET_ACCESS_KEY }}
+        run: npx --yes @inkdropapp/ipm-cli@1.0.6 publish
