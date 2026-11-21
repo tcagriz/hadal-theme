@@ -4,6 +4,20 @@ Make source changes in this repository. `hadal-vscode`, `hadal-inkdrop`,
 `hadal-zed` and `hadal.nvim` are synchronized mirrors and are not the source of
 truth.
 
+## Protected branch policy
+
+The `main` branch is protected in all five repositories.
+
+- Every change to `main` must come through a pull request; direct pushes are
+  blocked.
+- Pull requests from contributors require one approval from `@tcagriz`, the code
+  owner, and all required checks must pass.
+- Pull requests opened by `@tcagriz` may use the repository ruleset's
+  **pull request only** bypass. This keeps the pull request and audit trail
+  without requiring `@tcagriz` to approve their own pull request.
+- The Marketplace and Inkdrop publish jobs target the protected `production`
+  environment. They cannot publish until `@tcagriz` approves the deployment.
+
 ## Development
 
 `palette/palette.json` is the single source of truth for colors. These files are
@@ -72,17 +86,20 @@ scripts/sync.sh nvim
 ```
 
 The script uses `git subtree split`, refuses dirty package directories and never
-pushes. Push the monorepo and the relevant mirror separately.
+pushes. Create a feature branch in the mirror before syncing, push that branch and
+open a pull request; direct pushes to a mirror's `main` branch are blocked.
 
 ## Publishing
 
 Do not commit access tokens or other credentials.
 
 - **VS Code:** update `vscode/package.json` and `vscode/CHANGELOG.md`, then run the
-  `Publish to VS Code Marketplace` workflow in `hadal-vscode`.
+  `Publish to VS Code Marketplace` workflow in `hadal-vscode` and approve the
+  `production` deployment.
 - **Inkdrop:** update `inkdrop/package.json` and `inkdrop/CHANGELOG.md`, explicitly
   run `npx generate-palette`, then run `ipm publish` with local credentials or the
-  maintained GitHub Actions workflow.
+  maintained GitHub Actions workflow. The workflow pauses for the same
+  `production` deployment approval.
 - **Zed:** not published yet. The extension ID and registry name must be resolved
   before submitting to the Zed registry.
 
