@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2
+
+- Refresh the registry README with installation, requirements, update, support and
+  license information.
+
 ## 0.1.1
 
 - Generate `palette.json` explicitly before registry publication.
