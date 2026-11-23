@@ -88,6 +88,7 @@ cd vscode
 npx --yes @vscode/vsce@4.1.1 package --out /tmp/hadal-theme.vsix
 
 cd ../inkdrop
+python3 tests/publish_workflow_test.py
 npm ci
 npx generate-palette
 npm pack --dry-run
