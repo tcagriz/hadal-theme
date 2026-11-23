@@ -32,6 +32,7 @@
 Run from the package root:
 
 ```sh
+python3 tests/publish_workflow_test.py
 npm ci
 npx generate-palette
 python3 -m json.tool package.json > /dev/null

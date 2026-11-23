@@ -7,8 +7,27 @@ permissions:
   contents: read
 
 jobs:
+  validate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - name: Verify publish workflow secret isolation
+        run: python3 tests/publish_workflow_test.py
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate palette
+        run: npx generate-palette
+      - name: Validate package without registry credentials
+        run: npm pack --dry-run
+
   publish:
     if: github.ref == 'refs/heads/main'
+    needs: validate
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -27,7 +46,7 @@ jobs:
           INKDROP_SECRET_ACCESS_KEY: ${{ secrets.INKDROP_SECRET_ACCESS_KEY }}
         run: |
           if [ -z "$INKDROP_ACCESS_KEY_ID" ] || [ -z "$INKDROP_SECRET_ACCESS_KEY" ]; then
-            echo "::error::Set INKDROP_ACCESS_KEY_ID and INKDROP_SECRET_ACCESS_KEY repository secrets before publishing."
+            echo "::error::Set INKDROP_ACCESS_KEY_ID and INKDROP_SECRET_ACCESS_KEY as secrets on the protected production environment."
             exit 1
           fi
       - name: Publish package

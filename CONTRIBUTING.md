@@ -170,9 +170,25 @@ Do not commit access tokens or other credentials.
   `Publish to VS Code Marketplace` workflow in `hadal-vscode` and approve the
   `production` deployment.
 - **Inkdrop:** update `inkdrop/package.json` and `inkdrop/CHANGELOG.md`, explicitly
-  run `npx generate-palette`, then run `ipm publish` with local credentials or the
-  maintained GitHub Actions workflow. The workflow pauses for the same
-  `production` deployment approval.
+  run `npx generate-palette`, and validate the package with `npm pack --dry-run`.
+  Normal publication uses the maintained GitHub Actions workflow on `main`.
+  Its credential-free `validate` job must pass before the `publish` job reaches
+  the protected `production` environment approval.
+
+  `INKDROP_ACCESS_KEY_ID` and `INKDROP_SECRET_ACCESS_KEY` must exist only as
+  `production` environment secrets in `hadal-inkdrop`. Do not store them as
+  repository secrets or expose them to pull-request check jobs. After a
+  suspected exposure, revoke or rotate both values with the registry first,
+  remove any stale repository-level copies, replace the two environment
+  secrets, review registry publication logs, and run only the credential-free
+  package validation before re-enabling a guarded production deployment. Keep
+  the old values out of issues, logs, commit messages and secret-management
+  commands shown to other people.
+
+  Local `ipm publish` is a recovery path for a GitHub Actions outage, not the
+  normal release path. Use temporary credentials from an approved secret store,
+  package from a clean checkout, run the dry-run first, and remove the temporary
+  environment variables when finished.
 - **Zed:** not published yet. The extension ID and registry name must be resolved
   before submitting to the Zed registry.
 
