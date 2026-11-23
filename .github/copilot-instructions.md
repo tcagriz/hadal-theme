@@ -95,7 +95,9 @@ npm pack --dry-run
 
 For shell changes, run ShellCheck when available and exercise `install.sh` or
 `scripts/sync.sh` against temporary directories. Do not run installer tests
-against the real home directory.
+against the real home directory. For mirror synchronization changes, run
+`bash tests/sync_test.sh`; its fixtures must remain isolated and must not contact
+a remote.
 
 For Neovim changes, headless-load the colorscheme when Neovim is available and
 verify `vim.g.colors_name` plus the required core highlight groups. Verify that

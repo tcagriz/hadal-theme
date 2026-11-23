@@ -105,6 +105,11 @@ python3 -m json.tool vscode/themes/hadal-color-theme.json > /dev/null
 ```
 
 The `vscode/` and `inkdrop/` package directories also have their own CI workflows.
+Run the mirror synchronization regression tests when `scripts/sync.sh` changes:
+
+```sh
+bash tests/sync_test.sh
+```
 
 ## Bug and security reports
 
@@ -117,18 +122,45 @@ Follow [SECURITY.md](SECURITY.md) and use private vulnerability reporting.
 
 ## Standalone mirrors
 
-After committing package changes, synchronize the dedicated repository:
+After the package change is committed in `hadal-theme`, synchronize the dedicated
+repository from a clean monorepo:
+
+1. Update the mirror's local `main` branch without making package changes in it.
+2. Create a feature branch whose name identifies the source commit.
+3. Run `scripts/sync.sh` from the monorepo.
+
+For example, for VS Code:
 
 ```sh
-scripts/sync.sh vscode
-scripts/sync.sh inkdrop
-scripts/sync.sh zed
-scripts/sync.sh nvim
+source_sha="$(git rev-parse --short=12 HEAD)"
+git -C ../hadal-vscode switch main
+git -C ../hadal-vscode pull --ff-only
+git -C ../hadal-vscode switch -c "sync/vscode-$source_sha"
+scripts/sync.sh vscode ../hadal-vscode
 ```
 
-The script uses `git subtree split`, refuses dirty package directories and never
-pushes. Create a feature branch in the mirror before syncing, push that branch and
-open a pull request; direct pushes to a mirror's `main` branch are blocked.
+Use the same flow for `inkdrop` at `../hadal-inkdrop`, `zed` at `../hadal-zed`
+and `nvim` at `../hadal.nvim`.
+
+`sync.sh` requires both worktrees to be clean. It refuses to run on a mirror's
+`main` or other default branch, requires the feature branch to contain the current
+local mirror `main`, and verifies that the mirror's current tree corresponds to
+the prior source subtree history. It then creates a deterministic, fast-forward
+sync commit on the current feature branch and reports the full monorepo source
+commit. The script never pushes.
+
+Push the branch with the command printed by the script, then open a pull request
+to the mirror's `main` branch:
+
+```sh
+gh pr create --repo tcagriz/hadal-vscode --base main --head "sync/vscode-$source_sha"
+```
+
+Use the mirror's `gh` pull-request template. In **Source change**, link the
+monorepo pull request or commit so both reviews remain connected. To update an
+existing mirror PR after another source commit, keep the same feature branch,
+rerun `scripts/sync.sh`, then push that branch again. Direct pushes to `main` are
+not part of the sync workflow.
 
 ## Publishing
 
