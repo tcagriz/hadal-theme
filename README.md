@@ -9,6 +9,7 @@ development tools, so your editor, shell, multiplexer and file tools all look th
 - [Quick start](#quick-start)
 - [Setup per tool](#setup-per-tool)
 - [Uninstall](#uninstall)
+- [Support and security](#support-and-security)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -341,6 +342,17 @@ This is separate from **herdr-app** (the GUI), which uses `herdr-app/hadal.json`
   back to restore it.
 - Remove the one-line includes you added to `.zshrc`, `.tmux.conf`, `.wezterm.lua` and
   the tables you copied into `starship.toml` and the Herdr TUI config.
+
+## Support and security
+
+Use [GitHub Discussions](https://github.com/tcagriz/hadal-theme/discussions) for
+usage and installation questions. Use the
+[issue chooser](https://github.com/tcagriz/hadal-theme/issues/new/choose) for
+reproducible bugs and planned work, including package-specific reports.
+
+Do not publish suspected vulnerabilities or credentials in an issue. Follow
+[SECURITY.md](SECURITY.md) and use
+[private vulnerability reporting](https://github.com/tcagriz/hadal-theme/security/advisories/new).
 
 ## Contributing
 

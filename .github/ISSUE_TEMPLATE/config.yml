@@ -1,17 +1,11 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
   - name: Hadal Roadmap
     url: https://github.com/users/tcagriz/projects/3
     about: Review planned work and project status before opening a new task.
-  - name: VS Code package
-    url: https://github.com/tcagriz/hadal-vscode/issues
-    about: Report VS Code-specific behavior. Source fixes are maintained in hadal-theme.
-  - name: Inkdrop package
-    url: https://github.com/tcagriz/hadal-inkdrop/issues
-    about: Report Inkdrop-specific behavior. Source fixes are maintained in hadal-theme.
-  - name: Neovim package
-    url: https://github.com/tcagriz/hadal.nvim/issues
-    about: Report Neovim-specific behavior. Source fixes are maintained in hadal-theme.
-  - name: Zed package
-    url: https://github.com/tcagriz/hadal-zed/issues
-    about: Report Zed-specific behavior. Source fixes are maintained in hadal-theme.
+  - name: Questions and support
+    url: https://github.com/tcagriz/hadal-theme/discussions
+    about: Ask usage and installation questions before opening a bug.
+  - name: Report a security vulnerability
+    url: https://github.com/tcagriz/hadal-theme/security/advisories/new
+    about: Report suspected vulnerabilities or credential exposure privately.

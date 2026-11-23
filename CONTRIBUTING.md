@@ -32,6 +32,24 @@ standalone package mirror.
 - Keep implementation checklists on the linked issue instead of duplicating them
   in multiple README or project files.
 
+## AI-assisted contributions
+
+AI-assisted work is welcome. The contributor opening the pull request remains
+responsible for every changed line, including generated output.
+
+- Do not send credentials, registry keys, personal configuration or other
+  confidential data to an AI tool.
+- Review the complete diff. Do not accept generated code, commands, package
+  versions or license claims without checking them.
+- Verify behavior with the relevant local checks and report the commands you
+  actually ran in the pull request.
+- Follow the palette and generated-file rules below. Never hand-edit generated
+  output as a substitute for changing its source.
+- Keep contributions licensed compatibly with this repository and do not add
+  copied code without preserving required attribution and license notices.
+- AI use does not bypass code-owner review, protected branches, required checks
+  or deployment approvals.
+
 ## Development
 
 `palette/palette.json` is the single source of truth for colors. These files are
@@ -87,6 +105,15 @@ python3 -m json.tool vscode/themes/hadal-color-theme.json > /dev/null
 ```
 
 The `vscode/` and `inkdrop/` package directories also have their own CI workflows.
+
+## Bug and security reports
+
+Use the issue forms in this repository for bugs and planned work, including bugs
+that affect a standalone package mirror. Do not split implementation discussion
+between the monorepo and mirror issue trackers.
+
+Do not open public issues for suspected vulnerabilities or credential exposure.
+Follow [SECURITY.md](SECURITY.md) and use private vulnerability reporting.
 
 ## Standalone mirrors
 
