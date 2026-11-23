@@ -1,0 +1,128 @@
+name: Bug report
+description: Report reproducible behavior in Hadal or one of its package ports
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for all Hadal bug reports, including VS Code, Inkdrop,
+        Neovim and Zed. Source changes are made in this monorepo.
+
+        Do not include credentials, private configuration or security exploit
+        details. Suspected vulnerabilities must use
+        [private vulnerability reporting](https://github.com/tcagriz/hadal-theme/security/advisories/new).
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before reporting
+      options:
+        - label: I searched existing issues and the Hadal Roadmap.
+          required: true
+        - label: I can reproduce the problem with the current version.
+          required: true
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Affected package
+      description: Select the smallest package or tool area that reproduces the bug.
+      options:
+        - VS Code
+        - Inkdrop
+        - Neovim
+        - Zed
+        - herdr-app
+        - Herdr TUI
+        - Ghostty or cmux
+        - WezTerm
+        - opencode
+        - lsd
+        - lazygit
+        - tmux
+        - starship
+        - zsh
+        - install.sh
+        - Generator or CI
+        - Multiple packages
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Operating system
+      options:
+        - macOS
+        - Linux
+        - Windows
+        - Multiple operating systems
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Include the Hadal version, application version, shell or plugin manager version as relevant.
+      placeholder: "Hadal 0.1.2; VS Code 1.80; macOS 15"
+    validations:
+      required: true
+
+  - type: input
+    id: install-method
+    attributes:
+      label: Installation method
+      description: For example Marketplace, ipm, lazy.nvim, install.sh, symlink or manual copy.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Current behavior
+      description: Describe what happened. Include screenshots or text only when they help.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should happen instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Provide the smallest sequence that reproduces the issue.
+      placeholder: |
+        1. Install ...
+        2. Select ...
+        3. Open ...
+        4. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Relevant logs or configuration
+      description: Redact paths, tokens, credentials and personal content before pasting.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Additional context
+      description: Link related reports or describe regressions, workarounds and frequency.
+    validations:
+      required: false
