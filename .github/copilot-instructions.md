@@ -62,6 +62,8 @@
   publishing.
 - Update a package manifest, changelog and release automation together when a
   versioned package changes.
+- Release tags must have the exact form `vX.Y.Z`, match the package manifest and
+  changelog, and be published only from a clean mirror feature/release flow.
 
 ## Validation
 
@@ -85,6 +87,7 @@ Package checks:
 
 ```sh
 cd vscode
+python3 tests/publish_workflow_test.py
 npx --yes @vscode/vsce@4.1.1 package --out /tmp/hadal-theme.vsix
 
 cd ../inkdrop

@@ -16,7 +16,9 @@ jobs:
         run: python3 scripts/build.py --check
       - name: Mirror synchronization
         run: bash tests/sync_test.sh
-      - name: Inkdrop publish secret isolation
+      - name: VS Code release workflow
+        run: python3 vscode/tests/publish_workflow_test.py
+      - name: Inkdrop release workflow
         run: python3 inkdrop/tests/publish_workflow_test.py
       - name: JSON files are valid
         run: |

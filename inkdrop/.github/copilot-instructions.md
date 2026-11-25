@@ -26,6 +26,8 @@
   be scoped to the protected `production` environment.
 - Preserve production approval before registry publication and do not treat
   local publishing as the normal release path.
+- Follow `RELEASING.md` for tag-driven package releases. Never add a manual
+  publication path or republish by moving/deleting an immutable release tag.
 
 ## Validation
 

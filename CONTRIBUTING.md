@@ -166,14 +166,22 @@ not part of the sync workflow.
 
 Do not commit access tokens or other credentials.
 
-- **VS Code:** update `vscode/package.json` and `vscode/CHANGELOG.md`, then run the
-  `Publish to VS Code Marketplace` workflow in `hadal-vscode` and approve the
-  `production` deployment.
-- **Inkdrop:** update `inkdrop/package.json` and `inkdrop/CHANGELOG.md`, explicitly
-  run `npx generate-palette`, and validate the package with `npm pack --dry-run`.
-  Normal publication uses the maintained GitHub Actions workflow on `main`.
-  Its credential-free `validate` job must pass before the `publish` job reaches
-  the protected `production` environment approval.
+- **Versioned packages:** update the package `package.json`, `CHANGELOG.md` and
+  release automation together. Merge the monorepo pull request, synchronize the
+  package mirror and release only from that mirror's clean `main` branch. Version
+  tags must have the exact form `vX.Y.Z`, match `package.json` and have a matching
+  changelog heading. Never move, delete or force-push a release tag.
+- **VS Code:** follow [`vscode/RELEASING.md`](vscode/RELEASING.md). The tag starts
+  a credential-free build and immutable release-asset job, followed by the
+  protected `production` approval and VS Code trusted publishing from that exact
+  VSIX. A rerun compares the Marketplace VSIX SHA-256 before skipping an
+  existing version; VSCE's `--skip-duplicate` closes only a concurrent-publish
+  race.
+- **Inkdrop:** follow [`inkdrop/RELEASING.md`](inkdrop/RELEASING.md). Run
+  `npx generate-palette`, then build one release tarball before the protected
+  `production` approval. The publish job uses that immutable tarball, checks the
+  registry for the same version and exits successfully only when the published
+  file manifest is identical.
 
   `INKDROP_ACCESS_KEY_ID` and `INKDROP_SECRET_ACCESS_KEY` must exist only as
   `production` environment secrets in `hadal-inkdrop`. Do not store them as
@@ -189,6 +197,9 @@ Do not commit access tokens or other credentials.
   normal release path. Use temporary credentials from an approved secret store,
   package from a clean checkout, run the dry-run first, and remove the temporary
   environment variables when finished.
+
+  Normal Inkdrop publication starts only from an annotated `vX.Y.Z` tag. The
+  workflow has no `workflow_dispatch` publication path.
 - **Zed:** not published yet. The extension ID and registry name must be resolved
   before submitting to the Zed registry.
 

@@ -1,21 +1,45 @@
 name: Publish to Inkdrop registry
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
 
 permissions:
   contents: read
 
+concurrency:
+  group: release-${{ github.repository }}-${{ github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
   validate:
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    outputs:
+      package: ${{ steps.metadata.outputs.package }}
+      version: ${{ steps.metadata.outputs.version }}
+      artifact: ${{ steps.metadata.outputs.artifact }}
+      title: ${{ steps.metadata.outputs.title }}
+      sha256: ${{ steps.artifact.outputs.sha256 }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
+      - name: Verify release metadata
+        id: metadata
+        run: |
+          python3 scripts/release.py metadata \
+            --kind inkdrop \
+            --tag "$GITHUB_REF_NAME" \
+            --github-output "$GITHUB_OUTPUT"
+      - name: Verify tag is on main
+        run: |
+          git fetch --quiet origin main:refs/remotes/origin/main
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main
       - name: Verify publish workflow secret isolation
         run: python3 tests/publish_workflow_test.py
       - name: Install dependencies
@@ -23,24 +47,89 @@ jobs:
       - name: Generate palette
         run: npx generate-palette
       - name: Validate package without registry credentials
-        run: npm pack --dry-run
+        run: |
+          mkdir -p dist
+          npm pack --pack-destination dist
+          test -f "dist/${{ steps.metadata.outputs.artifact }}"
+      - name: Fingerprint package
+        id: artifact
+        run: |
+          python3 scripts/release.py fingerprint \
+            --artifact "dist/${{ steps.metadata.outputs.artifact }}" \
+            --github-output "$GITHUB_OUTPUT"
+      - name: Upload validated package
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ github.ref_name }}
+          path: dist/${{ steps.metadata.outputs.artifact }}
+          if-no-files-found: error
+          retention-days: 7
 
-  publish:
-    if: github.ref == 'refs/heads/main'
+  release:
     needs: validate
     runs-on: ubuntu-latest
+    outputs:
+      sha256: ${{ steps.release.outputs.sha256 }}
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Download validated package
+        uses: actions/download-artifact@v4
+        with:
+          name: release-${{ github.ref_name }}
+          path: dist
+      - name: Attach validated package to release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 scripts/release.py ensure-release \
+            --repo "$GITHUB_REPOSITORY" \
+            --tag "$GITHUB_REF_NAME" \
+            --title "Hadal Inkdrop ${{ needs.validate.outputs.version }}" \
+            --artifact "dist/${{ needs.validate.outputs.artifact }}" \
+            --sha256 "${{ needs.validate.outputs.sha256 }}" \
+            --github-output "$GITHUB_OUTPUT"
+
+  publish:
+    needs:
+      - validate
+      - release
+    runs-on: ubuntu-latest
     environment: production
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
-      - name: Install dependencies
-        run: npm ci
-      - name: Generate palette
-        run: npx generate-palette
+      - name: Download immutable release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p dist
+          python3 scripts/release.py download-asset \
+            --repo "$GITHUB_REPOSITORY" \
+            --tag "$GITHUB_REF_NAME" \
+            --asset "${{ needs.validate.outputs.artifact }}" \
+            --sha256 "${{ needs.release.outputs.sha256 }}" \
+            --output "dist/${{ needs.validate.outputs.artifact }}"
+      - name: Check published version
+        id: registry
+        run: |
+          python3 scripts/release.py inkdrop-status \
+            --name "${{ needs.validate.outputs.package }}" \
+            --version "${{ needs.validate.outputs.version }}" \
+            --artifact "dist/${{ needs.validate.outputs.artifact }}" \
+            --github-output "$GITHUB_OUTPUT"
       - name: Verify credentials
+        if: steps.registry.outputs.published != 'true'
         env:
           INKDROP_ACCESS_KEY_ID: ${{ secrets.INKDROP_ACCESS_KEY_ID }}
           INKDROP_SECRET_ACCESS_KEY: ${{ secrets.INKDROP_SECRET_ACCESS_KEY }}
@@ -50,11 +139,15 @@ jobs:
             exit 1
           fi
       - name: Publish package
+        if: steps.registry.outputs.published != 'true'
         env:
           INKDROP_ACCESS_KEY_ID: ${{ secrets.INKDROP_ACCESS_KEY_ID }}
           INKDROP_SECRET_ACCESS_KEY: ${{ secrets.INKDROP_SECRET_ACCESS_KEY }}
         run: |
-          if npx --yes @inkdropapp/ipm-cli@1.0.6 publish > ipm-publish.log 2>&1; then
+          mkdir -p dist/publish
+          tar -xzf "dist/${{ needs.validate.outputs.artifact }}" -C dist/publish
+          test -f dist/publish/package/package.json
+          if npx --yes @inkdropapp/ipm-cli@1.0.6 publish dist/publish/package > ipm-publish.log 2>&1; then
             cat ipm-publish.log
             rm -f ipm-publish.log
           else
