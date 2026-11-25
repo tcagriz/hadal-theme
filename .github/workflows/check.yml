@@ -14,6 +14,8 @@ jobs:
           python-version: "3.x"
       - name: Generated files are up to date
         run: python3 scripts/build.py --check
+      - name: Palette schema and generators
+        run: python3 -m unittest tests/build_test.py
       - name: Mirror synchronization
         run: bash tests/sync_test.sh
       - name: VS Code release workflow

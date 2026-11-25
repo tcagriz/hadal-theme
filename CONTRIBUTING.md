@@ -77,9 +77,13 @@ Regenerate and verify them with Python 3:
 ```sh
 python3 scripts/build.py
 python3 scripts/build.py --check
+python3 -m unittest tests/build_test.py
 ```
 
-When changing a color, commit both the palette and every regenerated file.
+The test suite validates the complete palette schema, every generator in
+`scripts/build.py::OUTPUTS`, deterministic byte output from an in-memory fixture
+and equality with the generated files. When changing a color, commit both the
+palette and every regenerated file.
 
 The following hand-written files contain mappings or tool-specific settings rather
 than generated color data:
@@ -99,6 +103,7 @@ Run the smallest relevant checks before committing:
 
 ```sh
 python3 scripts/build.py --check
+python3 -m unittest tests/build_test.py
 python3 -m json.tool palette/palette.json > /dev/null
 python3 -m json.tool zed/themes/hadal.json > /dev/null
 python3 -m json.tool vscode/themes/hadal-color-theme.json > /dev/null
