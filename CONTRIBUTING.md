@@ -104,6 +104,7 @@ Run the smallest relevant checks before committing:
 ```sh
 python3 scripts/build.py --check
 python3 -m unittest tests/build_test.py
+python3 -m unittest tests/actions_policy_test.py
 python3 -m json.tool palette/palette.json > /dev/null
 python3 -m json.tool zed/themes/hadal.json > /dev/null
 python3 -m json.tool vscode/themes/hadal-color-theme.json > /dev/null
@@ -115,6 +116,11 @@ Run the mirror synchronization regression tests when `scripts/sync.sh` changes:
 ```sh
 bash tests/sync_test.sh
 ```
+
+GitHub Actions references must be pinned to the full reviewed commit SHA and
+include the corresponding version as a comment. Keep the root
+`.github/dependabot.yml` plus the four package-local configs aligned when
+adding or removing a supported dependency ecosystem.
 
 ## Bug and security reports
 
