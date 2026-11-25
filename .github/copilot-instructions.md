@@ -29,6 +29,7 @@
   ```sh
   python3 scripts/build.py
   python3 scripts/build.py --check
+  python3 -m unittest tests/build_test.py
   ```
 
 - Commit the palette, generator and every regenerated output in the same
@@ -74,6 +75,7 @@ Root checks:
 
 ```sh
 python3 scripts/build.py --check
+python3 -m unittest tests/build_test.py
 python3 -m json.tool palette/palette.json > /dev/null
 python3 -m json.tool zed/themes/hadal.json > /dev/null
 python3 -m json.tool cmux/hadal.json > /dev/null

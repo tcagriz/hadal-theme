@@ -6,16 +6,112 @@ Usage:
   python3 scripts/build.py --check  exit 1 if a generated file is out of date
 """
 import json
+import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-P = json.loads((ROOT / "palette" / "palette.json").read_text())
+PALETTE_PATH = ROOT / "palette" / "palette.json"
+HEX_COLOR = re.compile(r"#[0-9a-fA-F]{6}")
+PALETTE_KEYS = {"name", "core", "ansi", "ui", "syntax", "tints", "status"}
+ROLE_KEYS = {
+    "core": {"bg", "fg", "selection", "cursor"},
+    "ui": {
+        "side", "canvas", "line", "popover", "raised", "hover", "active",
+        "border", "input", "dim", "comment", "accent", "focus", "solid",
+    },
+    "syntax": {
+        "string", "number", "builtin", "func", "orange", "error", "rosewater",
+        "fg_bright", "keyword", "type", "invalid", "add",
+    },
+    "tints": {
+        "error_bg", "warn_bg", "info_bg", "hint_bg", "diff_add",
+        "diff_change", "diff_delete", "diff_text",
+    },
+    "status": {"working", "blocked", "done", "idle", "unknown"},
+}
 
-core, ansi, ui, syn, status = P["core"], P["ansi"], P["ui"], P["syntax"], P["status"]
-BG, FG = core["bg"], core["fg"]
-(BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE,
- B_BLACK, B_RED, B_GREEN, B_YELLOW, B_BLUE, B_MAGENTA, B_CYAN, B_WHITE) = ansi
+
+class PaletteError(ValueError):
+    """The palette is missing required roles or contains invalid values."""
+
+
+def validate_palette(palette):
+    if not isinstance(palette, dict):
+        raise PaletteError("palette must be a JSON object")
+
+    actual_keys = set(palette)
+    missing = PALETTE_KEYS - actual_keys
+    extra = actual_keys - PALETTE_KEYS
+    if missing or extra:
+        details = []
+        if missing:
+            details.append("missing " + ", ".join(sorted(missing)))
+        if extra:
+            details.append("unexpected " + ", ".join(sorted(extra)))
+        raise PaletteError("palette keys: " + "; ".join(details))
+
+    if not isinstance(palette["name"], str) or not palette["name"].strip():
+        raise PaletteError("name must be a non-empty string")
+
+    ansi_colors = palette["ansi"]
+    if not isinstance(ansi_colors, list):
+        raise PaletteError("ansi must be a list")
+    if len(ansi_colors) != 16:
+        raise PaletteError(f"ansi must contain exactly 16 colors, got {len(ansi_colors)}")
+
+    for role_group, expected in ROLE_KEYS.items():
+        values = palette[role_group]
+        if not isinstance(values, dict):
+            raise PaletteError(f"{role_group} must be a JSON object")
+        actual = set(values)
+        missing_roles = expected - actual
+        extra_roles = actual - expected
+        if missing_roles or extra_roles:
+            details = []
+            if missing_roles:
+                details.append("missing " + ", ".join(sorted(missing_roles)))
+            if extra_roles:
+                details.append("unexpected " + ", ".join(sorted(extra_roles)))
+            raise PaletteError(f"{role_group} roles: " + "; ".join(details))
+
+        for role, color in values.items():
+            validate_color(f"{role_group}.{role}", color)
+
+    for index, color in enumerate(ansi_colors):
+        validate_color(f"ansi[{index}]", color)
+
+    return palette
+
+
+def validate_color(name, color):
+    if not isinstance(color, str) or HEX_COLOR.fullmatch(color) is None:
+        raise PaletteError(f"{name} must be a #RRGGBB color, got {color!r}")
+
+
+def set_palette(palette):
+    global P, core, ansi, ui, syn, status
+    global BG, FG, BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE
+    global B_BLACK, B_RED, B_GREEN, B_YELLOW, B_BLUE, B_MAGENTA, B_CYAN, B_WHITE
+
+    P = validate_palette(palette)
+    core, ansi, ui, syn, status = (
+        P["core"], P["ansi"], P["ui"], P["syntax"], P["status"]
+    )
+    BG, FG = core["bg"], core["fg"]
+    (
+        BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE,
+        B_BLACK, B_RED, B_GREEN, B_YELLOW, B_BLUE, B_MAGENTA, B_CYAN, B_WHITE,
+    ) = ansi
+
+
+def load_palette(path=PALETTE_PATH):
+    palette = json.loads(Path(path).read_text())
+    set_palette(palette)
+    return palette
+
+
+load_palette()
 
 
 def rgb(hex_color):
