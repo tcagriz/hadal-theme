@@ -76,6 +76,7 @@ Root checks:
 ```sh
 python3 scripts/build.py --check
 python3 -m unittest tests/build_test.py
+python3 -m unittest tests/actions_policy_test.py
 python3 -m json.tool palette/palette.json > /dev/null
 python3 -m json.tool zed/themes/hadal.json > /dev/null
 python3 -m json.tool cmux/hadal.json > /dev/null
@@ -108,3 +109,7 @@ a remote.
 For Neovim changes, headless-load the colorscheme when Neovim is available and
 verify `vim.g.colors_name` plus the required core highlight groups. Verify that
 `lazy.lua` can be evaluated without bufferline.nvim installed.
+
+For GitHub Actions changes, use current Node 24-compatible action majors, pin
+each `uses:` reference to a reviewed 40-character SHA with a version comment,
+and keep Dependabot configurations present in the monorepo and package mirrors.
