@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - name: Verify publish workflow secret isolation
+      - name: Verify release workflow
         run: python3 tests/publish_workflow_test.py
       - name: Install dependencies
         run: npm ci
