@@ -17,7 +17,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
-MODE=link
+MODE="link"
 DRY=0
 TOOLS=()
 
@@ -37,21 +37,35 @@ run() {
 }
 
 place() {
-  local src="$1" dest="$2"
+  local src="$1" dest="$2" placement_mode="${3:-$MODE}" backup="${2}.bak"
   if [ ! -e "$src" ]; then echo "  missing source: $src" >&2; return 1; fi
   run mkdir -p "$(dirname "$dest")"
-  if [ -L "$dest" ] && [ "$(readlink "$dest")" = "$src" ]; then
+  if [ "$placement_mode" = link ] && [ -L "$dest" ] &&
+    [ "$(readlink "$dest")" = "$src" ]; then
     echo "  ok      $dest"; return
   fi
   if [ -e "$dest" ] || [ -L "$dest" ]; then
-    if [ "$MODE" = copy ] && [ -f "$dest" ] && cmp -s "$src" "$dest"; then
+    if [ "$placement_mode" = copy ] && [ ! -L "$dest" ] && [ -f "$dest" ] &&
+      cmp -s "$src" "$dest"; then
       echo "  ok      $dest"; return
     fi
-    run mv "$dest" "$dest.bak"
-    echo "  backup  $dest.bak"
+    if [ -e "$backup" ] || [ -L "$backup" ]; then
+      echo "  refusing to overwrite existing backup: $backup" >&2
+      return 1
+    fi
+    run mv -n "$dest" "$backup"
+    if [ "$DRY" = 0 ] && { [ -e "$dest" ] || [ -L "$dest" ]; }; then
+      echo "  another installer created the backup: $backup" >&2
+      return 1
+    fi
+    echo "  backup  $backup"
   fi
-  if [ "$MODE" = link ]; then run ln -s "$src" "$dest"; else run cp "$src" "$dest"; fi
-  echo "  $MODE    $dest"
+  if [ "$placement_mode" = link ]; then
+    run ln -s "$src" "$dest"
+  else
+    run cp "$src" "$dest"
+  fi
+  echo "  $placement_mode    $dest"
 }
 
 for tool in "${TOOLS[@]}"; do
@@ -68,10 +82,7 @@ for tool in "${TOOLS[@]}"; do
     ghostty)
       # Always a real file: cmux does not list symlinked themes. Re-run to update it.
       dest="$CONFIG/ghostty/themes/hadal"
-      run mkdir -p "$(dirname "$dest")"
-      [ -L "$dest" ] && run rm "$dest"
-      run cp "$ROOT/ghostty/hadal" "$dest"
-      echo "  copy    $dest"
+      place "$ROOT/ghostty/hadal" "$dest" copy
       echo "  set 'theme = hadal' in your Ghostty config (cmux: cmux themes set hadal)"
       ;;
     opencode)

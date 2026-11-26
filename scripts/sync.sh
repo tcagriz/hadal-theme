@@ -78,9 +78,9 @@ python3 scripts/build.py --check
 source_status="$(git status --porcelain --untracked-files=all)"
 [ -z "$source_status" ] || die "source monorepo worktree changed during generated-file validation"
 
-source_commit="$(git rev-parse --verify HEAD^{commit})"
+source_commit="$(git rev-parse --verify 'HEAD^{commit}')"
 source_short="$(git rev-parse --short=12 "$source_commit")"
-target_head="$(git -C "$target" rev-parse --verify HEAD^{commit})"
+target_head="$(git -C "$target" rev-parse --verify 'HEAD^{commit}')"
 
 if git -C "$target" show-ref --verify --quiet refs/heads/main; then
   protected_ref="refs/heads/main"

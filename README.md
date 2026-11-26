@@ -89,7 +89,11 @@ What the installer does:
 
 - **Theme-owned files** (herdr-app, Zed, Neovim colorscheme, lsd colors) are placed in
   the tool's config directory. If a different file already exists there it is moved to
-  `<name>.bak` first. Running the installer again is safe.
+  `<name>.bak` first. The installer refuses to replace an existing backup, so review or
+  restore it before retrying. Running the installer again is safe after the backup is
+  clear.
+- **Ghostty** is always installed as a real file because cmux does not list symlinked
+  themes; it follows the same backup and repeat-run rules.
 - **Your own configs are never modified.** Files that you probably customized
   (starship, tmux, zsh, WezTerm, Herdr TUI, lazygit) are placed in
   `~/.config/hadal/<tool>/` and the installer prints how to include them.

@@ -100,11 +100,11 @@ npx generate-palette
 npm pack --dry-run
 ```
 
-For shell changes, run ShellCheck when available and exercise `install.sh` or
-`scripts/sync.sh` against temporary directories. Do not run installer tests
-against the real home directory. For mirror synchronization changes, run
-`bash tests/sync_test.sh`; its fixtures must remain isolated and must not contact
-a remote.
+For shell changes, run `shellcheck install.sh scripts/sync.sh
+tests/install_test.sh tests/sync_test.sh`, `bash tests/install_test.sh` and
+`bash tests/sync_test.sh`. Shell fixtures must use temporary `HOME` and
+`XDG_CONFIG_HOME` directories and must never touch the real home directory or a
+remote.
 
 For Neovim changes, headless-load the colorscheme when Neovim is available and
 verify `vim.g.colors_name` plus the required core highlight groups. Verify that
