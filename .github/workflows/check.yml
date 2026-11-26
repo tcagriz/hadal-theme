@@ -28,6 +28,10 @@ jobs:
         run: python3 vscode/tests/publish_workflow_test.py
       - name: Inkdrop release workflow
         run: python3 inkdrop/tests/publish_workflow_test.py
+      - name: Zed extension package
+        run: |
+          python3 zed/tests/check_extension.py --package /tmp/hadal-zed-extension.tar.gz
+          python3 -m unittest discover -s zed/tests -p 'check_extension_test.py'
       - name: JSON files are valid
         run: |
           python3 -m json.tool palette/palette.json > /dev/null
