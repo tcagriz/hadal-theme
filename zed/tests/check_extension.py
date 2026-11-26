@@ -77,7 +77,11 @@ def validate_manifest(path: Path) -> dict:
         require_string(manifest, key)
     if SEMVER.fullmatch(manifest["version"]) is None:
         raise ZedExtensionError("extension.toml: version must be semver X.Y.Z")
-    if manifest["schema_version"] != 1:
+    if (
+        not isinstance(manifest["schema_version"], int)
+        or isinstance(manifest["schema_version"], bool)
+        or manifest["schema_version"] != 1
+    ):
         raise ZedExtensionError("extension.toml: schema_version must be 1")
     authors = manifest["authors"]
     if (

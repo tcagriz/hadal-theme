@@ -63,6 +63,13 @@ class ZedExtensionTest(unittest.TestCase):
         )
         self.assert_invalid("version must be semver")
 
+        (self.root / "extension.toml").write_text(
+            (ROOT / "extension.toml").read_text().replace(
+                "schema_version = 1", "schema_version = true"
+            )
+        )
+        self.assert_invalid("schema_version must be 1")
+
     def test_missing_manifest_field_fails(self):
         manifest = (ROOT / "extension.toml").read_text()
         (self.root / "extension.toml").write_text(
