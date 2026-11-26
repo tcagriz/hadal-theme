@@ -122,6 +122,26 @@ class ZedExtensionTest(unittest.TestCase):
         (self.root / "themes" / "hadal.json").write_text(json.dumps(theme))
         self.assert_invalid("background.appearance must be one of")
 
+    def test_container_shapes_match_zed_schema(self):
+        for key, invalid, message in (
+            ("syntax", None, "syntax must be an object"),
+            ("players", [None], "players\\[0\\] must be an object"),
+            ("accents", {}, "accents must be an array"),
+        ):
+            with self.subTest(key=key):
+                theme = json.loads((ROOT / "themes" / "hadal.json").read_text())
+                theme["themes"][0]["style"][key] = invalid
+                (self.root / "themes" / "hadal.json").write_text(json.dumps(theme))
+                self.assert_invalid(message)
+
+        theme = json.loads((ROOT / "themes" / "hadal.json").read_text())
+        theme["themes"][0]["style"]["syntax"]["comment"] = {
+            "color": "#384887",
+            "font_style": {},
+        }
+        (self.root / "themes" / "hadal.json").write_text(json.dumps(theme))
+        self.assert_invalid("font_style must be one of")
+
     def test_missing_license_fails(self):
         (self.root / "LICENSE").unlink()
         with self.assertRaisesRegex(CHECK.ZedExtensionError, "missing package files"):

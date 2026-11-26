@@ -100,45 +100,78 @@ def validate_color(value, path: str) -> None:
         raise ZedExtensionError(f"{path} must be #RRGGBB or #RRGGBBAA")
 
 
-def validate_theme_value(value, path: str) -> None:
-    field = path.rsplit(".", 1)[-1]
-    if value is None:
-        return
-    if isinstance(value, str):
-        if field == "font_style":
-            if value not in FONT_STYLES:
-                raise ZedExtensionError(
-                    f"{path} must be one of: {', '.join(sorted(FONT_STYLES))}"
-                )
-            return
-        if path.endswith("style.background.appearance"):
-                if value not in BACKGROUND_APPEARANCES:
-                    raise ZedExtensionError(
-                        f"{path} must be one of: "
-                        f"{', '.join(sorted(BACKGROUND_APPEARANCES))}"
-                    )
-                return
-        if field == "font_weight":
-            raise ZedExtensionError(
-                f"{path} must be an integer font weight from 100 to 900"
-            )
+def validate_nullable_color(value, path: str) -> None:
+    if value is not None:
         validate_color(value, path)
-        return
-    if field == "font_weight":
-        if not isinstance(value, int) or isinstance(value, bool) or value not in FONT_WEIGHTS:
+
+
+def validate_highlight(value, path: str) -> None:
+    if not isinstance(value, dict):
+        raise ZedExtensionError(f"{path} must be an object")
+    allowed = {"background_color", "color", "font_style", "font_weight"}
+    unexpected = set(value) - allowed
+    if unexpected:
+        raise ZedExtensionError(
+            f"{path} has unexpected keys: {', '.join(sorted(unexpected))}"
+        )
+    for key in ("background_color", "color"):
+        if key in value:
+            validate_nullable_color(value[key], f"{path}.{key}")
+    if "font_style" in value and value["font_style"] is not None:
+        font_style = value["font_style"]
+        if not isinstance(font_style, str) or font_style not in FONT_STYLES:
             raise ZedExtensionError(
-                f"{path} must be an integer in 100-step values from 100 to 900"
+                f"{path}.font_style must be one of: "
+                f"{', '.join(sorted(FONT_STYLES))}"
             )
-        return
-    if isinstance(value, dict):
-        for key, child in value.items():
-            validate_theme_value(child, f"{path}.{key}")
-        return
-    if isinstance(value, list):
-        for index, child in enumerate(value):
-            validate_theme_value(child, f"{path}[{index}]")
-        return
-    raise ZedExtensionError(f"{path} has unsupported value type: {type(value).__name__}")
+    if "font_weight" in value and value["font_weight"] is not None:
+        weight = value["font_weight"]
+        if (
+            not isinstance(weight, int)
+            or isinstance(weight, bool)
+            or weight not in FONT_WEIGHTS
+        ):
+            raise ZedExtensionError(
+                f"{path}.font_weight must be an integer in 100-step values "
+                "from 100 to 900"
+            )
+
+
+def validate_style(style: dict) -> None:
+    for key, value in style.items():
+        path = f"themes[0].style.{key}"
+        if key == "background.appearance":
+            if value is not None and value not in BACKGROUND_APPEARANCES:
+                raise ZedExtensionError(
+                    f"{path} must be one of: "
+                    f"{', '.join(sorted(BACKGROUND_APPEARANCES))}"
+                )
+        elif key == "accents":
+            if not isinstance(value, list):
+                raise ZedExtensionError(f"{path} must be an array")
+            for index, color in enumerate(value):
+                validate_nullable_color(color, f"{path}[{index}]")
+        elif key == "syntax":
+            if not isinstance(value, dict):
+                raise ZedExtensionError(f"{path} must be an object")
+            for syntax_name, highlight in value.items():
+                validate_highlight(highlight, f"{path}.{syntax_name}")
+        elif key == "players":
+            if not isinstance(value, list):
+                raise ZedExtensionError(f"{path} must be an array")
+            for index, player in enumerate(value):
+                if not isinstance(player, dict):
+                    raise ZedExtensionError(f"{path}[{index}] must be an object")
+                unexpected = set(player) - {"background", "cursor", "selection"}
+                if unexpected:
+                    raise ZedExtensionError(
+                        f"{path}[{index}] has unexpected keys: "
+                        f"{', '.join(sorted(unexpected))}"
+                    )
+                for field, color in player.items():
+                    validate_nullable_color(color, f"{path}[{index}].{field}")
+        else:
+            validate_nullable_color(value, path)
 
 
 def validate_theme(path: Path, manifest: dict) -> dict:
@@ -165,7 +198,7 @@ def validate_theme(path: Path, manifest: dict) -> dict:
     style = entry.get("style")
     if not isinstance(style, dict) or not style:
         raise ZedExtensionError("theme style must be a non-empty object")
-    validate_theme_value(style, "themes[0].style")
+    validate_style(style)
     return theme
 
 
