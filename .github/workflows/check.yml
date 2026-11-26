@@ -20,6 +20,10 @@ jobs:
         run: python3 -m unittest tests/build_test.py
       - name: Mirror synchronization
         run: bash tests/sync_test.sh
+      - name: Shell scripts
+        run: shellcheck install.sh scripts/sync.sh tests/install_test.sh tests/sync_test.sh
+      - name: Installer filesystem behavior
+        run: bash tests/install_test.sh
       - name: VS Code release workflow
         run: python3 vscode/tests/publish_workflow_test.py
       - name: Inkdrop release workflow

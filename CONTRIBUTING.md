@@ -117,6 +117,17 @@ Run the mirror synchronization regression tests when `scripts/sync.sh` changes:
 bash tests/sync_test.sh
 ```
 
+For installer or shell-script changes, run ShellCheck and the isolated installer
+suite:
+
+```sh
+shellcheck install.sh scripts/sync.sh tests/install_test.sh tests/sync_test.sh
+bash tests/install_test.sh
+```
+
+Installer fixtures set a temporary `HOME` and `XDG_CONFIG_HOME`; never run them
+against the real home directory.
+
 GitHub Actions references must be pinned to the full reviewed commit SHA and
 include the corresponding version as a comment. Keep the root
 `.github/dependabot.yml` plus the four package-local configs aligned when
