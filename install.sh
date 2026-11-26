@@ -53,7 +53,11 @@ place() {
       echo "  refusing to overwrite existing backup: $backup" >&2
       return 1
     fi
-    run mv "$dest" "$backup"
+    run mv -n "$dest" "$backup"
+    if [ "$DRY" = 0 ] && { [ -e "$dest" ] || [ -L "$dest" ]; }; then
+      echo "  another installer created the backup: $backup" >&2
+      return 1
+    fi
     echo "  backup  $backup"
   fi
   if [ "$placement_mode" = link ]; then

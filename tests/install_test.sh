@@ -130,6 +130,34 @@ test_existing_backup_is_preserved() {
   echo "ok - existing backups are never overwritten"
 }
 
+test_backup_creation_is_no_clobber() {
+  fixture backup-race
+  destination="$CONFIG/zed/themes/hadal.json"
+  mkdir -p "$(dirname "$destination")"
+  printf 'raced user file\n' >"$destination"
+
+  real_mv="$(command -v mv)"
+  shim="$FIXTURE/bin"
+  mkdir -p "$shim"
+  cat >"$shim/mv" <<EOF
+#!/usr/bin/env bash
+printf 'concurrent backup\\n' >"$destination.bak"
+exec "$real_mv" "\$@"
+EOF
+  chmod +x "$shim/mv"
+
+  output="$FIXTURE/output.txt"
+  if PATH="$shim:$PATH" install --copy zed >"$output" 2>&1; then
+    cat "$output" >&2
+    fail "installer unexpectedly succeeded after concurrent backup creation"
+  fi
+
+  assert_contains "$output" "another installer created the backup: $destination.bak"
+  assert_eq "$(cat "$destination.bak")" "concurrent backup"
+  assert_eq "$(cat "$destination")" "raced user file"
+  echo "ok - concurrent backup creation is no-clobber"
+}
+
 test_broken_symlink_is_backed_up() {
   fixture broken-symlink
   destination="$CONFIG/zed/themes/hadal.json"
@@ -189,6 +217,7 @@ test_copy_install_is_idempotent
 test_copy_replaces_existing_symlink
 test_existing_file_gets_backup
 test_existing_backup_is_preserved
+test_backup_creation_is_no_clobber
 test_broken_symlink_is_backed_up
 test_ghostty_copy_backs_up_and_is_idempotent
 test_ghostty_broken_symlink_preserves_backup
