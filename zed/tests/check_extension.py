@@ -27,6 +27,7 @@ COLOR = re.compile(r"#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?")
 THEME_SCHEMA = "https://zed.dev/schema/themes/v0.2.0.json"
 FONT_STYLES = {"normal", "italic", "oblique"}
 FONT_WEIGHTS = set(range(100, 1000, 100))
+BACKGROUND_APPEARANCES = {"opaque", "transparent", "blurred"}
 PACKAGE_FILES = (
     ".github/CODEOWNERS",
     ".github/ISSUE_TEMPLATE/config.yml",
@@ -100,21 +101,30 @@ def validate_color(value, path: str) -> None:
 
 
 def validate_theme_value(value, path: str) -> None:
+    field = path.rsplit(".", 1)[-1]
+    if value is None:
+        return
     if isinstance(value, str):
-        field = path.rsplit(".", 1)[-1]
         if field == "font_style":
             if value not in FONT_STYLES:
                 raise ZedExtensionError(
                     f"{path} must be one of: {', '.join(sorted(FONT_STYLES))}"
                 )
             return
+        if path.endswith("style.background.appearance"):
+                if value not in BACKGROUND_APPEARANCES:
+                    raise ZedExtensionError(
+                        f"{path} must be one of: "
+                        f"{', '.join(sorted(BACKGROUND_APPEARANCES))}"
+                    )
+                return
         if field == "font_weight":
             raise ZedExtensionError(
                 f"{path} must be an integer font weight from 100 to 900"
             )
         validate_color(value, path)
         return
-    if path.rsplit(".", 1)[-1] == "font_weight":
+    if field == "font_weight":
         if not isinstance(value, int) or isinstance(value, bool) or value not in FONT_WEIGHTS:
             raise ZedExtensionError(
                 f"{path} must be an integer in 100-step values from 100 to 900"

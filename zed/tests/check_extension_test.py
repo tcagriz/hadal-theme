@@ -105,6 +105,23 @@ class ZedExtensionTest(unittest.TestCase):
         (self.root / "themes" / "hadal.json").write_text(json.dumps(theme))
         self.assert_invalid("100-step values")
 
+    def test_schema_valid_null_and_background_appearance_values_pass(self):
+        theme = json.loads((self.root / "themes" / "hadal.json").read_text())
+        theme["themes"][0]["style"]["background"] = None
+        theme["themes"][0]["style"]["background.appearance"] = "blurred"
+        theme["themes"][0]["style"]["syntax"]["comment"] = {
+            "color": None,
+            "font_style": None,
+            "font_weight": None,
+        }
+        (self.root / "themes" / "hadal.json").write_text(json.dumps(theme))
+        manifest = CHECK.validate_manifest(self.root / "extension.toml")
+        CHECK.validate_theme(self.root / "themes" / "hadal.json", manifest)
+
+        theme["themes"][0]["style"]["background.appearance"] = "invalid"
+        (self.root / "themes" / "hadal.json").write_text(json.dumps(theme))
+        self.assert_invalid("background.appearance must be one of")
+
     def test_missing_license_fails(self):
         (self.root / "LICENSE").unlink()
         with self.assertRaisesRegex(CHECK.ZedExtensionError, "missing package files"):
