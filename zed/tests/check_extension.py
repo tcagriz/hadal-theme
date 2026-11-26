@@ -25,6 +25,23 @@ REQUIRED_MANIFEST_KEYS = {
 SEMVER = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
 COLOR = re.compile(r"#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?")
 THEME_SCHEMA = "https://zed.dev/schema/themes/v0.2.0.json"
+FONT_STYLES = {"normal", "italic", "oblique"}
+FONT_WEIGHTS = set(range(100, 1000, 100))
+PACKAGE_FILES = (
+    ".github/CODEOWNERS",
+    ".github/ISSUE_TEMPLATE/config.yml",
+    ".github/copilot-instructions.md",
+    ".github/dependabot.yml",
+    ".github/pull_request_template.md",
+    ".github/workflows/check.yml",
+    "LICENSE",
+    "README.md",
+    "SECURITY.md",
+    "extension.toml",
+    "tests/check_extension.py",
+    "tests/check_extension_test.py",
+    "themes/hadal.json",
+)
 
 
 class ZedExtensionError(ValueError):
@@ -84,12 +101,27 @@ def validate_color(value, path: str) -> None:
 
 def validate_theme_value(value, path: str) -> None:
     if isinstance(value, str):
+        field = path.rsplit(".", 1)[-1]
+        if field == "font_style":
+            if value not in FONT_STYLES:
+                raise ZedExtensionError(
+                    f"{path} must be one of: {', '.join(sorted(FONT_STYLES))}"
+                )
+            return
+        if field == "font_weight":
+            raise ZedExtensionError(
+                f"{path} must be an integer font weight from 100 to 900"
+            )
         validate_color(value, path)
+        return
+    if path.rsplit(".", 1)[-1] == "font_weight":
+        if not isinstance(value, int) or isinstance(value, bool) or value not in FONT_WEIGHTS:
+            raise ZedExtensionError(
+                f"{path} must be an integer in 100-step values from 100 to 900"
+            )
         return
     if isinstance(value, dict):
         for key, child in value.items():
-            if key in {"font_style", "font_weight"}:
-                continue
             validate_theme_value(child, f"{path}.{key}")
         return
     if isinstance(value, list):
@@ -128,28 +160,26 @@ def validate_theme(path: Path, manifest: dict) -> dict:
 
 
 def expected_files(root: Path) -> list[Path]:
-    required = {
-        root / "extension.toml",
-        root / "themes" / "hadal.json",
-        root / "LICENSE",
-        root / "README.md",
-        root / ".github" / "dependabot.yml",
-        root / ".github" / "workflows" / "check.yml",
-    }
+    required = {root / relative for relative in PACKAGE_FILES}
     missing = [path for path in required if not path.is_file()]
     if missing:
         raise ZedExtensionError(
             "missing package files: "
             + ", ".join(str(path.relative_to(root)) for path in missing)
         )
-    return sorted(
-        path
-        for path in root.rglob("*")
-        if path.is_file()
-        and ".git" not in path.parts
-        and "__pycache__" not in path.parts
-        and path.suffix not in {".pyc", ".pyo"}
-    )
+    files = []
+    for relative in PACKAGE_FILES:
+        path = root / relative
+        if path.is_symlink():
+            raise ZedExtensionError(f"package file must not be a symlink: {relative}")
+        try:
+            path.resolve().relative_to(root.resolve())
+        except ValueError as error:
+            raise ZedExtensionError(
+                f"package file escapes the Zed package root: {relative}"
+            ) from error
+        files.append(path)
+    return sorted(files)
 
 
 def package_extension(root: Path, output: Path) -> None:
@@ -181,6 +211,8 @@ def inspect_package(root: Path, output: Path) -> None:
     for member in members.values():
         if member.name.startswith("/") or ".." in Path(member.name).parts:
             raise ZedExtensionError(f"unsafe packaged path: {member.name}")
+        if not member.isfile():
+            raise ZedExtensionError(f"unsafe packaged member type: {member.name}")
 
 
 def main() -> None:

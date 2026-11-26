@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Failure-path tests for the Zed extension package contract."""
 
-from copy import deepcopy
 import importlib.util
 import json
 from pathlib import Path
 import shutil
+import tarfile
 import tempfile
 import unittest
 
@@ -24,16 +24,11 @@ class ZedExtensionTest(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="hadal-zed-test-")
         self.root = Path(self.temp.name) / "zed"
         self.root.mkdir()
-        for relative in ("extension.toml", "themes/hadal.json", "LICENSE", "README.md"):
+        for relative in CHECK.PACKAGE_FILES:
             source = ROOT / relative
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source, target)
-        (self.root / ".github" / "workflows").mkdir(parents=True)
-        (self.root / ".github" / "dependabot.yml").write_text("version: 2\nupdates: []\n")
-        (self.root / ".github" / "workflows" / "check.yml").write_text(
-            "name: Check\non: [push]\njobs: {}\n"
-        )
 
     def tearDown(self):
         self.temp.cleanup()
@@ -95,9 +90,38 @@ class ZedExtensionTest(unittest.TestCase):
         (self.root / "themes" / "hadal.json").write_text(json.dumps(theme))
         self.assert_invalid("must be #RRGGBB")
 
+    def test_invalid_font_style_and_weight_fail(self):
+        theme = json.loads((self.root / "themes" / "hadal.json").read_text())
+        style = theme["themes"][0]["style"]["syntax"].copy()
+        style["comment"] = {"color": "#384887", "font_style": "garbage"}
+        theme["themes"][0]["style"]["syntax"] = style
+        (self.root / "themes" / "hadal.json").write_text(json.dumps(theme))
+        self.assert_invalid("font_style must be one of")
+
+        theme = json.loads((ROOT / "themes" / "hadal.json").read_text())
+        style = theme["themes"][0]["style"]["syntax"].copy()
+        style["comment"] = {"color": "#384887", "font_weight": 42}
+        theme["themes"][0]["style"]["syntax"] = style
+        (self.root / "themes" / "hadal.json").write_text(json.dumps(theme))
+        self.assert_invalid("100-step values")
+
     def test_missing_license_fails(self):
         (self.root / "LICENSE").unlink()
         with self.assertRaisesRegex(CHECK.ZedExtensionError, "missing package files"):
+            CHECK.expected_files(self.root)
+
+    def test_external_symlink_is_not_packaged(self):
+        external = Path(self.temp.name) / "private.txt"
+        external.write_text("private")
+        link = self.root / "private-link"
+        link.symlink_to(external)
+        CHECK.package_extension(self.root, Path(self.temp.name) / "package.tar.gz")
+        with tarfile.open(Path(self.temp.name) / "package.tar.gz", "r:gz") as archive:
+            self.assertNotIn("private-link", archive.getnames())
+
+        (self.root / "README.md").unlink()
+        (self.root / "README.md").symlink_to(external)
+        with self.assertRaisesRegex(CHECK.ZedExtensionError, "must not be a symlink"):
             CHECK.expected_files(self.root)
 
     def test_missing_manifest_theme_name_match_fails(self):
